@@ -20,9 +20,9 @@ files <- c(
 )
 
 # Create directory for SIDER data
-dir.create("data", showWarnings = FALSE)
-dir.create("data/_raw", showWarnings = FALSE)
-dir.create("data/_raw/sider/", showWarnings = FALSE)
+dir.create("../data", showWarnings = FALSE)
+dir.create("../data/_raw", showWarnings = FALSE)
+dir.create("../data/_raw/sider/", showWarnings = FALSE)
 
 
 # Download files
