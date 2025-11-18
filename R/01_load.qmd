@@ -127,20 +127,16 @@ sider_freq_pt <- sider_freq %>%
 sider_freq_agg <- sider_freq_pt %>%
   group_by(STITCH_flat, UMLS_MedDRA) %>%
   summarise(
-    # NEW: mark "placebo" if any placebo row exists, otherwise "not"
     placebo = {
       vals <- unique(trimws(placebo))
       vals <- vals[vals != "" & !is.na(vals)]
       if ("placebo" %in% vals) "yes" else "no"
     },
-    # keep all textual descriptions (if you want, you can later simplify this)
     freq_text      = join_unique(freq_description),
-    # already keeping LOWEST numeric frequency
     freq_lower     = {
       v <- min(freq_lower_num, na.rm = TRUE)
       if (is.infinite(v)) NA_real_ else v
     },
-    # already keeping HIGHEST numeric frequency
     freq_upper     = {
       v <- max(freq_upper_num, na.rm = TRUE)
       if (is.infinite(v)) NA_real_ else v
