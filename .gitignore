@@ -1,1 +1,4 @@
-Dataset/
+_raw/*
+!_raw/data/
+_raw/data/*
+.Rproj.user
