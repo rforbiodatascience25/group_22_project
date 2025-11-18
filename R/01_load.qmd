@@ -184,6 +184,16 @@ drug_names
 colnames(drug_names)
 ```
 
-```{r}
-#hello
+```{bash}
+mkdir "../data/_raw/drugbank"
+curl -Lfv -o "../data/_raw/drugbank/drugbank_vocabulary.zip" "https://go.drugbank.com/releases/5-1-13/downloads/all-drugbank-vocabulary"
+
+curl -Lfv -o "../data/_raw/drugbank/drugbank_structures.zip" -u "s243161@dtu.dk:&5O&w6inYYPc^" "https://go.drugbank.com/releases/5-1-13/downloads/all-structure-links"
+
+curl -Lfv -o "../data/_raw/drugbank/drugbank_targets.zip" -u "s243161@dtu.dk:&5O&w6inYYPc^" "https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links"
+
+
+unzip "../data/_raw/drugbank/drugbank_vocabulary.zip" -d "../data/_raw/drugbank/"
+unzip "../data/_raw/drugbank/drugbank_structures.zip" -d "../data/_raw/drugbank/"
+unzip "../data/_raw/drugbank/drugbank_targets.zip" -d "../data/_raw/drugbank/"
 ```
