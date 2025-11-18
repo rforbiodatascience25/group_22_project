@@ -1,25 +1,96 @@
 ---
-title: "01_load"
-author: "Group 22"
+title: "SIDER_dataload"
 format: html
 editor: visual
 ---
 
-## Quarto
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
 ```{r}
-1 + 1
+# Download and store SIDER data
+library(tidyverse)
+
+# SIDER base URL
+base_url <- "http://sideeffects.embl.de/media/download/"
+
+files <- c(
+  "meddra_all_se.tsv.gz",
+  "meddra_freq.tsv.gz",
+  "meddra_all_label_se.tsv.gz",
+  "meddra_all_indications.tsv.gz",
+  "drug_names.tsv"
+)
+
+# Create directory for SIDER data
+dir.create("data", showWarnings = FALSE)
+dir.create("data/_raw", showWarnings = FALSE)
+dir.create("data/_raw/sider/", showWarnings = FALSE)
+
+
+# Download files
+for (f in files) {
+  download.file(paste0(base_url, f), 
+                destfile = file.path("../data/_raw/sider", f), 
+                mode = "wb")
+}
 ```
 
-You can add options to executable code like this
-
 ```{r}
-#| echo: false
-2 * 2
+library(tidyverse)
+# Load frequency data
+sider_freq <- read_tsv("../data/_raw/sider/meddra_freq.tsv.gz",
+                       col_names = c("STITCH_flat", "STITCH_stereo",
+                                     "UMLS_CUI", "placebo",
+                                     "freq_description", "freq_lower", "freq_upper",
+                                     "MedDRA_concept_type", "side_effect"),
+                       col_types = cols())
+
+# Load indications
+sider_indications <- read_tsv("../data/_raw/sider/meddra_all_indications.tsv.gz",
+                              col_names = c("STITCH_flat", "STITCH_stereo",
+                                           "UMLS_CUI", "method_of_detection",
+                                           "concept_name", "MedDRA_concept_type",
+                                           "UMLS_CUI_from_label", "MedDRA_concept_name"),
+                              col_types = cols())
+
+# Load drug names
+drug_names <- read_tsv("../data/_raw/sider/drug_names.tsv",
+                       col_names = c("STITCH_flat", "STITCH_stereo", "drug_name"),
+                       col_types = cols())
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+```{r}
+# We can see when inspecting the dataframes that STITCH_stereo has different value types? So we use STITCH_flat and then rename STITCH_stereo to drug_name
+
+#Rename it
+drug_names <- drug_names %>% 
+  rename(drug_name = STITCH_stereo)
+
+# Join frequencies with drug names using STITCH_flat
+drug_freq_named <- sider_freq %>%
+  left_join(drug_names %>% select(STITCH_flat, drug_name), 
+            by = "STITCH_flat")
+
+# Join indications with drug names using STITCH_flat
+drug_indications_named <- sider_indications %>%
+  left_join(drug_names %>% select(STITCH_flat, drug_name), 
+            by = "STITCH_flat")
+
+# Now combine everything
+drug_complete <- drug_freq_named %>%
+  full_join(drug_indications_named, 
+            by = c("STITCH_flat", "drug_name"),
+            suffix = c("_se", "_indication"))
+
+```
+
+```{r}
+drug_names
+```
+
+```{r}
+colnames(drug_names)
+```
+
+```{r}
+#hello
+```
