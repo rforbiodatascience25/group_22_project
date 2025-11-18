@@ -125,7 +125,7 @@ sider_freq_agg <- sider_freq_pt %>%
     placebo = {
       vals <- unique(trimws(placebo))
       vals <- vals[vals != "" & !is.na(vals)]
-      if ("placebo" %in% vals) "placebo" else "not"
+      if ("placebo" %in% vals) "yes" else "no"
     },
     # keep all textual descriptions (if you want, you can later simplify this)
     freq_text      = join_unique(freq_description),
