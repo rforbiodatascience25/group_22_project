@@ -1,4 +1,4 @@
-_raw/*
-!_raw/data/
-_raw/data/*
+data/*
+!data/_raw/
+data/_raw/*
 .Rproj.user
