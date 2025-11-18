@@ -2,3 +2,4 @@ data/*
 !data/_raw/
 data/_raw/*
 .Rproj.user/
+.Rproj
