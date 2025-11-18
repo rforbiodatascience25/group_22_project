@@ -202,5 +202,27 @@ unzip "../data/_raw/drugbank/drugbank_targets.zip" -d "../data/_raw/drugbank/"
 rm -rf "../data/_raw/drugbank/drugbank_vocabulary.zip"
 rm -rf "../data/_raw/drugbank/drugbank_structures.zip"
 rm -rf "../data/_raw/drugbank/drugbank_targets.zip"
+```
+
+## Cleaning and Merging the Drugbank datasets
+
+```{r}
+library(readr)
+vocabulary <- read_csv("../data/_raw/drugbank/drugbank vocabulary.csv")
+structures <- read_csv("../data/_raw/drugbank/structure links.csv")
+targets <- read_csv("../data/_raw/drugbank/uniprot links.csv")
+
+
+library(dplyr)
+
+#Merging the Drugbank datasets
+drugbank_merged <- vocabulary %>%
+  inner_join(structures, by = "DrugBank ID") %>%
+  inner_join(targets, by = "DrugBank ID")
+
+#remove all duplicated collums
+drugbank_merged <- select(drugbank_merged, -"CAS Number", -"InChIKey", -"Name.x", -"Name.y")
+
+colnames(drugbank_merged)
 
 ```
