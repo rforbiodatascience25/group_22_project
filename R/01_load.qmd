@@ -16,7 +16,8 @@ files <- c(
   "meddra_freq.tsv.gz",
   "meddra_all_label_se.tsv.gz",
   "meddra_all_indications.tsv.gz",
-  "drug_names.tsv"
+  "drug_names.tsv",
+  "drug_atc.tsv"
 )
 
 # Create directory for SIDER data
@@ -35,51 +36,143 @@ for (f in files) {
 
 ```{r}
 library(tidyverse)
-# Load frequency data
-sider_freq <- read_tsv("../data/_raw/sider/meddra_freq.tsv.gz",
-                       col_names = c("STITCH_flat", "STITCH_stereo",
-                                     "UMLS_CUI", "placebo",
-                                     "freq_description", "freq_lower", "freq_upper",
-                                     "MedDRA_concept_type", "side_effect"),
-                       col_types = cols())
 
-# Load indications
-sider_indications <- read_tsv("../data/_raw/sider/meddra_all_indications.tsv.gz",
-                              col_names = c("STITCH_flat", "STITCH_stereo",
-                                           "UMLS_CUI", "method_of_detection",
-                                           "concept_name", "MedDRA_concept_type",
-                                           "UMLS_CUI_from_label", "MedDRA_concept_name"),
-                              col_types = cols())
+# Load side effects (meddra_all_se)
+sider_se <- read_tsv(
+  "../data/_raw/sider/meddra_all_se.tsv.gz",
+  col_names = c("STITCH_flat", "STITCH_stereo",
+                "UMLS_CUI_label", "MedDRA_concept_type",
+                "UMLS_MedDRA", "side_effect"),
+  col_types = cols()
+)
+
+# Load frequency data (meddra_freq)
+sider_freq <- read_tsv(
+  "../data/_raw/sider/meddra_freq.tsv.gz",
+  col_names = c("STITCH_flat", "STITCH_stereo",
+                "UMLS_CUI_label", "placebo",
+                "freq_description", "freq_lower", "freq_upper",
+                "MedDRA_concept_type", "UMLS_MedDRA", "side_effect"),
+  col_types = cols()
+)
+
+# Load indications (meddra_all_indications)
+sider_indications <- read_tsv(
+  "../data/_raw/sider/meddra_all_indications.tsv.gz",
+  col_names = c("STITCH_flat", "UMLS_CUI_label",
+               "method_of_detection", "concept_name",
+               "MedDRA_concept_type", "UMLS_MedDRA",
+               "MedDRA_concept_name"),
+  col_types = cols()
+)
 
 # Load drug names
-drug_names <- read_tsv("../data/_raw/sider/drug_names.tsv",
-                       col_names = c("STITCH_flat", "STITCH_stereo", "drug_name"),
-                       col_types = cols())
+drug_names <- read_tsv(
+  "../data/_raw/sider/drug_names.tsv",
+  col_names = c("STITCH_flat", "drug_name"),
+  col_types = cols()
+)
+
+
+# Load ATC codes
+drug_atc <- read_tsv(
+  "../data/_raw/sider/drug_atc.tsv",
+  col_names = c("STITCH_flat", "ATC_code"),
+  col_types = cols()
+)
 
 ```
 
 ```{r}
-# We can see when inspecting the dataframes that STITCH_stereo has different value types? So we use STITCH_flat and then rename STITCH_stereo to drug_name
+# Helper: join unique non-empty values into a single string
+join_unique <- function(x) {
+  x <- unique(x)
+  x <- x[!is.na(x)]
+  x <- trimws(x)
+  x <- x[x != ""]
+  if (length(x) == 0) NA_character_ else paste(sort(x), collapse = "; ")
+}
 
-#Rename it
-drug_names <- drug_names %>% 
-  rename(drug_name = STITCH_stereo)
+# Aggregate drug names per STITCH_flat
+drug_names_agg <- drug_names %>%
+  group_by(STITCH_flat) %>%
+  summarise(drug_name = join_unique(drug_name), .groups = "drop")
 
-# Join frequencies with drug names using STITCH_flat
-drug_freq_named <- sider_freq %>%
-  left_join(drug_names %>% select(STITCH_flat, drug_name), 
-            by = "STITCH_flat")
+# Aggregate ATC codes per STITCH_flat
+drug_atc_agg <- drug_atc %>%
+  group_by(STITCH_flat) %>%
+  summarise(ATC = join_unique(ATC_code), .groups = "drop")
 
-# Join indications with drug names using STITCH_flat
-drug_indications_named <- sider_indications %>%
-  left_join(drug_names %>% select(STITCH_flat, drug_name), 
-            by = "STITCH_flat")
+# ---- Side effects: keep PT only ----
+sider_se_pt <- sider_se %>%
+  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) %>%
+  filter(MedDRA_concept_type == "PT") %>%
+  distinct(STITCH_flat, UMLS_MedDRA, side_effect_PT = side_effect)
 
-# Now combine everything
-drug_complete <- drug_freq_named %>%
-  full_join(drug_indications_named, 
-            by = c("STITCH_flat", "drug_name"),
-            suffix = c("_se", "_indication"))
+# ---- Frequencies: keep PT only & aggregate per drug + side-effect ----
+sider_freq_pt <- sider_freq %>%
+  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) %>%
+  filter(MedDRA_concept_type == "PT") %>%
+  mutate(
+    freq_lower_num = suppressWarnings(as.numeric(freq_lower)),
+    freq_upper_num = suppressWarnings(as.numeric(freq_upper))
+  )
+
+sider_freq_agg <- sider_freq_pt %>%
+  group_by(STITCH_flat, UMLS_MedDRA) %>%
+  summarise(
+    # NEW: mark "placebo" if any placebo row exists, otherwise "not"
+    placebo = {
+      vals <- unique(trimws(placebo))
+      vals <- vals[vals != "" & !is.na(vals)]
+      if ("placebo" %in% vals) "placebo" else "not"
+    },
+    # keep all textual descriptions (if you want, you can later simplify this)
+    freq_text      = join_unique(freq_description),
+    # already keeping LOWEST numeric frequency
+    freq_lower     = {
+      v <- min(freq_lower_num, na.rm = TRUE)
+      if (is.infinite(v)) NA_real_ else v
+    },
+    # already keeping HIGHEST numeric frequency
+    freq_upper     = {
+      v <- max(freq_upper_num, na.rm = TRUE)
+      if (is.infinite(v)) NA_real_ else v
+    },
+    .groups = "drop"
+  )
+
+
+# ---- Indications: keep PT only & aggregate per drug ----
+sider_indications_pt <- sider_indications %>%
+  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) %>%
+  filter(MedDRA_concept_type == "PT")
+
+indications_agg <- sider_indications_pt %>%
+  group_by(STITCH_flat) %>%
+  summarise(indication_PT = join_unique(MedDRA_concept_name), .groups = "drop")
+
+# ---- Combine everything into the master table ----
+drug_complete <- sider_se_pt %>%
+  left_join(sider_freq_agg,    by = c("STITCH_flat", "UMLS_MedDRA")) %>%
+  left_join(indications_agg,   by = "STITCH_flat") %>%
+  left_join(drug_names_agg,    by = "STITCH_flat") %>%
+  left_join(drug_atc_agg,      by = "STITCH_flat") %>%
+  distinct(
+    STITCH_flat,
+    drug_name,
+    ATC,
+    UMLS_MedDRA,
+    side_effect_PT,
+    placebo,
+    freq_text,
+    freq_lower,
+    freq_upper,
+    indication_PT
+  )
+
+# Optional: inspect a few rows
+head(drug_complete)
 
 ```
 
