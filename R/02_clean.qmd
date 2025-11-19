@@ -1,0 +1,177 @@
+---
+title: "02_clean"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+---
+
+## Loading libraries and functions
+
+```{r}
+#| warning: false
+#| error: false
+#| message: false
+library(tidyverse)
+library(purrr)
+library(readr)
+library(dplyr)
+library(stringr)
+source("99_proj_func.R")
+```
+
+## Loading SIDER datafiles
+
+```{r}
+#| warning: false
+#| error: false
+#| message: false
+
+data_path = "../data/"
+raw_path = paste0(data_path, "_raw/")
+sider_path = paste0(raw_path, "sider/")
+drugbank_path = paste0(raw_path, "drugbank/")
+
+# Load side effects (meddra_all_se)
+sider_se <- read_tsv(
+  paste0(data_path,"sider_se.tsv"))
+
+# Load frequency data (meddra_freq)
+sider_freq <- read_tsv(
+  paste0(data_path,"sider_freq.tsv"))
+
+# Load indications (meddra_all_indications)
+sider_indications <- read_tsv(
+  paste0(data_path,"sider_indications.tsv"))
+
+# Load drug names
+drug_names <- read_tsv(
+  paste0(data_path,"drug_names.tsv"))
+
+
+# Load ATC codes
+drug_atc <- read_tsv(
+  paste0(data_path,"drug_atc.tsv"))
+
+```
+
+## Merging the tables of the SIDER data set, removing redundant and unnecessary rows
+
+```{r}
+# Aggregate drug names per STITCH_flat
+drug_names_agg <- drug_names |>
+  group_by(STITCH_flat)|>
+  summarise(drug_name = join_unique(drug_name), .groups = "drop")
+
+# Aggregate ATC codes per STITCH_flat
+drug_atc_agg <- drug_atc |>
+  group_by(STITCH_flat) |>
+  summarise(ATC = join_unique(ATC_code), .groups = "drop")
+
+# Side effects: keep PT only
+sider_se_pt <- sider_se |>
+  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) |>
+  filter(MedDRA_concept_type == "PT") |>
+  distinct(STITCH_flat, UMLS_MedDRA, side_effect_PT = side_effect)
+
+# Frequencies: keep PT only & aggregate per drug + side-effect
+sider_freq_pt <- sider_freq |>
+  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) |>
+  filter(MedDRA_concept_type == "PT") |>
+  mutate(
+    freq_lower_num = suppressWarnings(as.numeric(freq_lower)),
+    freq_upper_num = suppressWarnings(as.numeric(freq_upper))
+  )
+
+sider_freq_agg <- sider_freq_pt |>
+  group_by(STITCH_flat, UMLS_MedDRA) |>
+  summarise(
+    placebo = {
+      vals <- unique(trimws(placebo))
+      vals <- vals[vals != "" & !is.na(vals)]
+      if ("placebo" %in% vals) "yes" else "no"
+    },
+
+    freq_text = join_unique(freq_description),
+
+    freq_lower = {
+      v <- min(freq_lower_num, na.rm = TRUE)
+      if (is.infinite(v)) NA_real_ else v
+    },
+
+    freq_upper = {
+      v <- max(freq_upper_num, na.rm = TRUE)
+      if (is.infinite(v)) NA_real_ else v
+    },
+
+    .groups = "drop"
+  )
+
+# Indications: keep PT only & aggregate per drug
+sider_indications_pt <- sider_indications |>
+  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) |>
+  filter(MedDRA_concept_type == "PT")
+
+indications_agg <- sider_indications_pt |>
+  group_by(STITCH_flat) |>
+  summarise(indication_PT = join_unique(MedDRA_concept_name), .groups = "drop")
+
+# Combine everything into the master table
+drug_complete <- sider_se_pt |>
+  left_join(sider_freq_agg,    by = c("STITCH_flat", "UMLS_MedDRA")) |>
+  left_join(indications_agg,   by = "STITCH_flat") |>
+  left_join(drug_names_agg,    by = "STITCH_flat") |>
+  left_join(drug_atc_agg,      by = "STITCH_flat") |>
+  distinct(
+    STITCH_flat,
+    drug_name,
+    ATC,
+    UMLS_MedDRA,
+    side_effect_PT,
+    placebo,
+    freq_text,
+    freq_lower,
+    freq_upper,
+    indication_PT
+  )
+
+# Inspect
+drug_complete
+```
+
+## Saving the SIDER data set to a local file
+
+```{r}
+write_tsv(drug_complete, paste0(data_path,"sider_full_clean.tsv"))
+```
+
+## Loading Drugbank datasets
+
+```{r}
+#| warning: false
+#| error: false
+#| message: false
+vocabulary <- read_tsv(paste0(data_path,"drugbank_vocabulary.tsv"))
+structures <- read_tsv(paste0(data_path,"drugbank_structures.tsv"))
+targets <- read_tsv(paste0(data_path,"drugbank_targets.tsv"))
+```
+
+## Cleaning and Merging the Drugbank datasets
+
+```{r}
+#Merging the Drugbank datasets
+drugbank_merged <- vocabulary |>
+  inner_join(structures, by = "DrugBank ID") |>
+  inner_join(targets, by = "DrugBank ID")
+
+#remove all duplicated collums
+drugbank_merged <- select(drugbank_merged, -"CAS Number", -"InChIKey", -"Name.x", -"Name.y")
+
+drugbank_merged
+```
+
+## Exporting Drugbank Data
+
+```{r}
+write_tsv(drugbank_merged, paste0(data_path,"drugbank_full_clean.tsv"))
+```

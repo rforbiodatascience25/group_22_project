@@ -1,18 +1,43 @@
 ---
-title: "SIDER_dataload"
-format: html
+title: "01_load.qmd"
+format: 
+  html:
+    embed-resources: true
 editor: visual
 ---
 
-## Downloading the SIDER data set
+## Loading libraries and functions
 
 ```{r}
-# Download and store SIDER data
+#| warning: false
+#| error: false
+#| message: false
 library(tidyverse)
+library(purrr)
+library(readr)
+library(dplyr)
+library(stringr)
+library(curl)
+source("99_proj_func.R")
+```
 
+## Downloading SIDER data
+
+```{r}
+#| warning: false
+#| error: false
+#| message: false
 # SIDER base URL
 base_url <- "http://sideeffects.embl.de/media/download/"
+data_path = "../data/"
+raw_path = paste0(data_path, "_raw/")
+sider_path = paste0(raw_path, "sider/")
+drugbank_path = paste0(raw_path, "drugbank/")
 
+# Create directory for SIDER data
+dir.create(sider_path, recursive = TRUE, showWarnings = FALSE)
+
+# Files to download
 files <- c(
   "meddra_all_se.tsv.gz",
   "meddra_freq.tsv.gz",
@@ -22,28 +47,26 @@ files <- c(
   "drug_atc.tsv"
 )
 
-# Create directory for SIDER data
-dir.create("../data", showWarnings = FALSE)
-dir.create("../data/_raw", showWarnings = FALSE)
-dir.create("../data/_raw/sider/", showWarnings = FALSE)
-
-
-# Download files
-for (f in files) {
-  download.file(paste0(base_url, f), 
-                destfile = file.path("../data/_raw/sider", f), 
-                mode = "wb")
-}
+# Downloading
+files |> walk(~
+  curl_download(
+    paste0(base_url, .x),
+    file.path(sider_path, .x),
+    quiet = TRUE
+  )
+)
 ```
 
-## Loading the SIDER data set
+## Adding column names to SIDER dataset
 
 ```{r}
-library(tidyverse)
+#| warning: false
+#| error: false
+#| message: false
 
 # Load side effects (meddra_all_se)
 sider_se <- read_tsv(
-  "../data/_raw/sider/meddra_all_se.tsv.gz",
+  paste0(sider_path,"meddra_all_se.tsv.gz"),
   col_names = c("STITCH_flat", "STITCH_stereo",
                 "UMLS_CUI_label", "MedDRA_concept_type",
                 "UMLS_MedDRA", "side_effect"),
@@ -52,7 +75,7 @@ sider_se <- read_tsv(
 
 # Load frequency data (meddra_freq)
 sider_freq <- read_tsv(
-  "../data/_raw/sider/meddra_freq.tsv.gz",
+  paste0(sider_path,"meddra_freq.tsv.gz"),
   col_names = c("STITCH_flat", "STITCH_stereo",
                 "UMLS_CUI_label", "placebo",
                 "freq_description", "freq_lower", "freq_upper",
@@ -62,7 +85,7 @@ sider_freq <- read_tsv(
 
 # Load indications (meddra_all_indications)
 sider_indications <- read_tsv(
-  "../data/_raw/sider/meddra_all_indications.tsv.gz",
+  paste0(sider_path,"meddra_all_indications.tsv.gz"),
   col_names = c("STITCH_flat", "UMLS_CUI_label",
                "method_of_detection", "concept_name",
                "MedDRA_concept_type", "UMLS_MedDRA",
@@ -72,7 +95,7 @@ sider_indications <- read_tsv(
 
 # Load drug names
 drug_names <- read_tsv(
-  "../data/_raw/sider/drug_names.tsv",
+  paste0(sider_path,"drug_names.tsv"),
   col_names = c("STITCH_flat", "drug_name"),
   col_types = cols()
 )
@@ -80,149 +103,74 @@ drug_names <- read_tsv(
 
 # Load ATC codes
 drug_atc <- read_tsv(
-  "../data/_raw/sider/drug_atc.tsv",
+  paste0(sider_path,"drug_atc.tsv"),
   col_names = c("STITCH_flat", "ATC_code"),
   col_types = cols()
 )
 
 ```
 
-## Merging the tables of the SIDER data set, removing redundant and unnecessary rows
+## Saving SIDER data
 
 ```{r}
-# Helper: join unique non-empty values into a single string
-join_unique <- function(x) {
-  x <- unique(x)
-  x <- x[!is.na(x)]
-  x <- trimws(x)
-  x <- x[x != ""]
-  if (length(x) == 0) NA_character_ else paste(sort(x), collapse = "; ")
-}
-
-# Aggregate drug names per STITCH_flat
-drug_names_agg <- drug_names %>%
-  group_by(STITCH_flat) %>%
-  summarise(drug_name = join_unique(drug_name), .groups = "drop")
-
-# Aggregate ATC codes per STITCH_flat
-drug_atc_agg <- drug_atc %>%
-  group_by(STITCH_flat) %>%
-  summarise(ATC = join_unique(ATC_code), .groups = "drop")
-
-# ---- Side effects: keep PT only ----
-sider_se_pt <- sider_se %>%
-  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) %>%
-  filter(MedDRA_concept_type == "PT") %>%
-  distinct(STITCH_flat, UMLS_MedDRA, side_effect_PT = side_effect)
-
-# ---- Frequencies: keep PT only & aggregate per drug + side-effect ----
-sider_freq_pt <- sider_freq %>%
-  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) %>%
-  filter(MedDRA_concept_type == "PT") %>%
-  mutate(
-    freq_lower_num = suppressWarnings(as.numeric(freq_lower)),
-    freq_upper_num = suppressWarnings(as.numeric(freq_upper))
-  )
-
-sider_freq_agg <- sider_freq_pt %>%
-  group_by(STITCH_flat, UMLS_MedDRA) %>%
-  summarise(
-    placebo = {
-      vals <- unique(trimws(placebo))
-      vals <- vals[vals != "" & !is.na(vals)]
-      if ("placebo" %in% vals) "yes" else "no"
-    },
-    freq_text      = join_unique(freq_description),
-    freq_lower     = {
-      v <- min(freq_lower_num, na.rm = TRUE)
-      if (is.infinite(v)) NA_real_ else v
-    },
-    freq_upper     = {
-      v <- max(freq_upper_num, na.rm = TRUE)
-      if (is.infinite(v)) NA_real_ else v
-    },
-    .groups = "drop"
-  )
-
-
-# ---- Indications: keep PT only & aggregate per drug ----
-sider_indications_pt <- sider_indications %>%
-  mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) %>%
-  filter(MedDRA_concept_type == "PT")
-
-indications_agg <- sider_indications_pt %>%
-  group_by(STITCH_flat) %>%
-  summarise(indication_PT = join_unique(MedDRA_concept_name), .groups = "drop")
-
-# ---- Combine everything into the master table ----
-drug_complete <- sider_se_pt %>%
-  left_join(sider_freq_agg,    by = c("STITCH_flat", "UMLS_MedDRA")) %>%
-  left_join(indications_agg,   by = "STITCH_flat") %>%
-  left_join(drug_names_agg,    by = "STITCH_flat") %>%
-  left_join(drug_atc_agg,      by = "STITCH_flat") %>%
-  distinct(
-    STITCH_flat,
-    drug_name,
-    ATC,
-    UMLS_MedDRA,
-    side_effect_PT,
-    placebo,
-    freq_text,
-    freq_lower,
-    freq_upper,
-    indication_PT
-  )
-
-# Optional: inspect a few rows
-head(drug_complete)
-
-```
-
-## Saving the SIDER data set to a local file
-
-```{r}
-write_tsv(drug_complete, "../data/sider_full_clean.tsv")
+write_tsv(sider_se, paste0(data_path,"sider_se.tsv"))
+write_tsv(sider_freq, paste0(data_path,"sider_freq.tsv"))
+write_tsv(sider_indications, paste0(data_path,"sider_indications.tsv"))
+write_tsv(drug_names, paste0(data_path,"drug_names.tsv"))
+write_tsv(drug_atc, paste0(data_path,"drug_atc.tsv"))
 ```
 
 ## Downloading the Drugbank data set
 
-```{bash}
-mkdir "../data/_raw/drugbank"
-curl -Lfv -o "../data/_raw/drugbank/drugbank_vocabulary.zip" "https://go.drugbank.com/releases/5-1-13/downloads/all-drugbank-vocabulary"
+```{r}
+#| warning: false
+#| error: false
+#| message: false
+# Make directory
+dir.create(drugbank_path, recursive = TRUE, showWarnings = FALSE)
 
-curl -Lfv -o "../data/_raw/drugbank/drugbank_structures.zip" -u "s243161@dtu.dk":"&5O&w6inYYPc^" "https://go.drugbank.com/releases/5-1-13/downloads/all-structure-links"
+# Files to download
+urls <- c(
+  vocabulary = "https://go.drugbank.com/releases/5-1-13/downloads/all-drugbank-vocabulary",
+  structures = "https://go.drugbank.com/releases/5-1-13/downloads/all-structure-links",
+  targets    = "https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links"
+)
 
-curl -Lfv -o "../data/_raw/drugbank/drugbank_targets.zip" -u "s243161@dtu.dk":"&5O&w6inYYPc^" "https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links"
+zip_paths <- file.path(drugbank_path, paste0("drugbank_", names(urls), ".zip"))
 
-unzip "../data/_raw/drugbank/drugbank_vocabulary.zip" -d "../data/_raw/drugbank/"
-unzip "../data/_raw/drugbank/drugbank_structures.zip" -d "../data/_raw/drugbank/"
-unzip "../data/_raw/drugbank/drugbank_targets.zip" -d "../data/_raw/drugbank/"
+# Credentials
+user <- "s243161@dtu.dk"
+password <- "&5O&w6inYYPc^"           #Remove this later
 
+# Download
+walk2(
+  urls,
+  zip_paths,
+  ~ curl_download(
+      url = .x,
+      destfile = .y,
+      quiet = TRUE,
+      handle = new_handle(userpwd = paste0(user, ":", password))
+    )
+)
 
-rm -rf "../data/_raw/drugbank/drugbank_vocabulary.zip"
-rm -rf "../data/_raw/drugbank/drugbank_structures.zip"
-rm -rf "../data/_raw/drugbank/drugbank_targets.zip"
+# Unzip
+walk(zip_paths, ~ unzip(.x, exdir = drugbank_path))
+
+# Delete zips
+zip_paths |>
+  file.remove() |>
+  invisible()
+
+vocabulary <- read_csv(paste0(drugbank_path,"drugbank vocabulary.csv"))
+structures <- read_csv(paste0(drugbank_path,"structure links.csv"))
+targets <- read_csv(paste0(drugbank_path,"uniprot links.csv"))
 ```
 
-## Cleaning and Merging the Drugbank datasets
+## Saving Drugbank datasets
 
 ```{r}
-library(readr)
-vocabulary <- read_csv("../data/_raw/drugbank/drugbank vocabulary.csv")
-structures <- read_csv("../data/_raw/drugbank/structure links.csv")
-targets <- read_csv("../data/_raw/drugbank/uniprot links.csv")
-
-
-library(dplyr)
-
-#Merging the Drugbank datasets
-drugbank_merged <- vocabulary %>%
-  inner_join(structures, by = "DrugBank ID") %>%
-  inner_join(targets, by = "DrugBank ID")
-
-#remove all duplicated collums
-drugbank_merged <- select(drugbank_merged, -"CAS Number", -"InChIKey", -"Name.x", -"Name.y")
-
-colnames(drugbank_merged)
-
+write_tsv(vocabulary, paste0(data_path,"drugbank_vocabulary.tsv"))
+write_tsv(structures, paste0(data_path,"drugbank_structures.tsv"))
+write_tsv(targets, paste0(data_path,"drugbank_targets.tsv"))
 ```
