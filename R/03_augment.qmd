@@ -1,5 +1,54 @@
 ---
-title: "03_augment"
-format: html
+title: "03_augment.qmd"
+format: 
+  html:
+    embed-resources: true
+editor: visual
 ---
 
+## Loading libraries
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(stringr)
+```
+
+## Loading cleaned, full data
+
+```{r}
+#| message: false
+#| warning: false
+data_path = "../data/"
+sider = read_tsv(paste0(data_path, "sider_full_clean.tsv"))
+drugbank = read_tsv(paste0(data_path, "drugbank_full_clean.tsv"))
+```
+
+## Merging on names
+
+```{r}
+sider <- sider |>
+  rename("Common name"=drug_name)
+drugbank <- drugbank |>
+  mutate(`Common name` = str_to_lower(`Common name`)) |>
+  group_by(`DrugBank ID`) |>
+  summarise(
+    across(
+      .cols = -c(`UniProt ID`, `UniProt Name`),
+      .fns = ~ first(.x)
+    ),
+    UniProt_IDs = list(unique(`UniProt ID`)),
+    UniProt_Names = list(unique(`UniProt Name`)),
+    .groups = "drop"
+  )
+
+df <- drugbank |>
+  inner_join(sider, by="Common name")
+```
+
+## Export as tsv
+
+```{r}
+#| message: false
+write_tsv(df, paste0(data_path,"merged_data.tsv"))
+```
