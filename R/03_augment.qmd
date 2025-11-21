@@ -9,24 +9,29 @@ editor: visual
 ## Loading libraries
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(dplyr)
 library(stringr)
+library(rcdk)
+library(RChemMass)
+source("99_proj_func.R")
 ```
 
 ## Loading cleaned, full data
 
 ```{r}
 #| message: false
-#| warning: false
 data_path = "../data/"
 sider = read_tsv(paste0(data_path, "sider_full_clean.tsv"))
 drugbank = read_tsv(paste0(data_path, "drugbank_full_clean.tsv"))
 ```
 
-## Merging on names
+## Adding Lipinski features and fixing column names
 
 ```{r}
+#| message: false
+#| warning: false
 sider <- sider |>
   rename("Common name"=drug_name)
 drugbank <- drugbank |>
@@ -41,9 +46,22 @@ drugbank <- drugbank |>
     UniProt_Names = list(unique(`UniProt Name`)),
     .groups = "drop"
   )
+# This takes quite some time (10-20min), but it works
+drugbank <- drugbank |>
+  drop_na(SMILES) |>
+  mutate(Molecular_weight = map_dbl(SMILES, smiles2mass)) |>
+  mutate(HBD = map_dbl(SMILES, count_hbd)) |>
+  mutate(HBA = map_dbl(SMILES, count_hba)) |>
+  mutate(Clog_P = map_dbl(SMILES, calc_clogp)) |>
+  mutate(Lipinski = HBD <= 5 &
+                    HBA <= 10 &
+                    Molecular_weight < 500 &
+                    Clog_P <= 5)
 
-df <- drugbank |>
-  inner_join(sider, by="Common name")
+```
+
+```{r}
+df <- drugbank |> inner_join(sider, by="Common name")
 ```
 
 ## Export as tsv

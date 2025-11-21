@@ -9,6 +9,7 @@ editor: visual
 ## Loading libraries and functions
 
 ```{r}
+#| message: false
 library(tidyverse)
 source("99_proj_func.R")
 ```
@@ -22,29 +23,6 @@ data_path = "../data/"
 df <- read_tsv(paste0(data_path, "merged_data.tsv"))
 ```
 
-## Lipiniski features
-
 ```{r}
-count_na = sum(is.na(df$Formula))
-print(count_na)
-```
-
-```{r}
-df <- df |>
-  mutate(Molecular_weight = molecular_weight(Formula))
-
-
-```
-
-```{r}
-bad_elements <- df$Formula |>
-  purrr::map(~ stringr::str_extract_all(.x, "([A-Z][a-z]?)([0-9]*)")) |>
-  purrr::flatten() |>
-  unlist() |>
-  stringr::str_extract("^[A-Z][a-z]?") |>
-  unique() |>
-  setdiff(names(atomic_weights))
-
-bad_elements
-
+df
 ```
