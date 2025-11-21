@@ -171,7 +171,7 @@ drugbank_merged <- vocabulary |>
   inner_join(targets, by = "DrugBank ID")
 
 #remove all duplicated collums
-drugbank_merged <- select(drugbank_merged, -"CAS Number", -"InChIKey", -"Name.x", -"Name.y")
+drugbank_merged <- select(drugbank_merged, -"CAS Number", -"InChIKey", -"Name.x", -"Name.y", -"InChI", -"Standard InChI Key")
 
 # Cleaning the PubChem ID from merging
 drugbank_merged <- drugbank_merged |> 
