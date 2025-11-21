@@ -135,6 +135,12 @@ drug_complete <- sider_se_pt |>
     indication_PT
   )
 
+# Removing "CID" from Pubchem ID
+drug_complete <- drug_complete |>
+  mutate(
+    pubchem_id = gsub("^CID", "", STITCH_flat)
+  )
+
 # Inspect
 drug_complete
 ```
@@ -167,6 +173,15 @@ drugbank_merged <- vocabulary |>
 #remove all duplicated collums
 drugbank_merged <- select(drugbank_merged, -"CAS Number", -"InChIKey", -"Name.x", -"Name.y")
 
+# Cleaning the PubChem ID from merging
+drugbank_merged <- drugbank_merged |> 
+  rename(
+    pubchem_id = `PubChem Compound ID`
+  ) |>
+  mutate(
+    pubchem_id = as.character(pubchem_id)
+  )
+
 drugbank_merged
 ```
 
@@ -174,4 +189,10 @@ drugbank_merged
 
 ```{r}
 write_tsv(drugbank_merged, paste0(data_path,"drugbank_full_clean.tsv"))
+```
+
+## Merging Drugbank and SIDER into one big Table
+
+```{sider_drugbank <- drug_complete |>}
+  inner_join(drugbank_merged, by = "pubchem_id")
 ```
