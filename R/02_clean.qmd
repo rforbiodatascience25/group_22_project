@@ -135,12 +135,6 @@ drug_complete <- sider_se_pt |>
     indication_PT
   )
 
-# Removing "CID" from Pubchem ID
-drug_complete <- drug_complete |>
-  mutate(
-    pubchem_id = gsub("^CID", "", STITCH_flat)
-  )
-
 # Inspect
 drug_complete
 ```
@@ -173,15 +167,6 @@ drugbank_merged <- vocabulary |>
 #remove all duplicated collums
 drugbank_merged <- select(drugbank_merged, -"CAS Number", -"InChIKey", -"Name.x", -"Name.y", -"InChI", -"Standard InChI Key")
 
-# Cleaning the PubChem ID from merging
-drugbank_merged <- drugbank_merged |> 
-  rename(
-    pubchem_id = `PubChem Compound ID`
-  ) |>
-  mutate(
-    pubchem_id = as.character(pubchem_id)
-  )
-
 drugbank_merged
 ```
 
@@ -193,6 +178,77 @@ write_tsv(drugbank_merged, paste0(data_path,"drugbank_full_clean.tsv"))
 
 ## Merging Drugbank and SIDER into one big Table
 
-```{sider_drugbank <- drug_complete |>}
-  inner_join(drugbank_merged, by = "pubchem_id")
+```{r}
+library(data.table)
+setDT(drug_complete)
+setDT(drugbank_merged)
+
+normalize_name <- function(x) {
+  x <- tolower(x)
+  x <- gsub("[^a-z0-9 ]+", " ", x)  # keep letters/numbers only
+  x <- gsub("\\s+", " ", x)
+  trimws(x)
+}
+
+```
+
+## Normalize Drugbank and SIDER drug names
+
+```{r}
+
+drug_complete[, drug_name_norm := normalize_name(drug_name)]
+
+drugbank_merged[, common_name_norm := normalize_name(`Common name`)]
+drugbank_merged[, synonyms_norm := normalize_name(Synonyms)]
+
+# Split synonyms
+drugbank_merged[, syn_list := strsplit(synonyms_norm, " \\| ")]
+
+db_syn <- drugbank_merged[, .(DrugBank_ID = `DrugBank ID`,
+                              synonym = unlist(syn_list))]
+
+# Remove empty and invalid synonyms
+invalid <- c("nad", "nadh", "nadp", "nadh2", "amp", "adp", "atp",
+             "coenzyme a", "cofactor", "substrate", "product")
+
+db_syn <- db_syn[
+  nchar(synonym) >= 4 &
+  !(synonym %in% invalid) &
+  !grepl("^[a-z]{1,4}$", synonym)      # remove super short lowercase (e.g. "acid", "salt")
+]
+
+```
+
+## Create a lookup table
+
+```{r}
+db_lookup <- unique(rbind(
+  data.table(DrugBank_ID = drugbank_merged$`DrugBank ID`,
+             match_name = drugbank_merged$common_name_norm),
+  data.table(DrugBank_ID = db_syn$DrugBank_ID,
+             match_name = db_syn$synonym)
+))
+
+db_lookup <- db_lookup[nchar(match_name) > 2]
+
+
+```
+
+## Merge both databases based on lookup tables
+
+```{r}
+sider_db_name <- merge(
+  drug_complete,
+  db_lookup,
+  by.x = "drug_name_norm",
+  by.y = "match_name",
+  all.x = TRUE,
+  allow.cartesian = FALSE  # avoid many-to-many false matches
+)
+
+```
+## Filter out entries where either the Drugbank ID or the Stitch_Flat IDs are missing
+```{r}
+cleaned <- subset(sider_db_name, !is.na(DrugBank_ID) & !is.na(STITCH_flat))
+
 ```
