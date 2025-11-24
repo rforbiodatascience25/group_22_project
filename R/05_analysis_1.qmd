@@ -63,14 +63,14 @@ side_effect_rates |> arrange(desc(n_reports))
 
 ```{r}
 # Filter once so both correlation and plot use the exact same data
-df <- side_effect_rates
+# df <- side_effect_rates
 
 # Compute and print the correlation
-correlation <- cor(df$n_reports, df$avg_rate, use = "complete.obs")
+correlation <- cor(side_effect_rates$n_reports, df$avg_rate, use = "complete.obs")
 print(paste("Correlation between number of reports and average frequency rate:", round(correlation, 3)))
 
 # Plot
-plot_correlation <- df |>
+plot_correlation <- side_effect_rates |>
   ggplot(aes(x = n_reports, y = avg_rate)) +
   #ggplot(aes(x = n_percentage_mentions, y = avg_rate)) +
   geom_point(alpha = 0.5, color = "darkcyan") +

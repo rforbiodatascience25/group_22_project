@@ -1,0 +1,26 @@
+## Now lets look at a more nuanced analysis
+
+Specifically, lets look at drugs that target nuclear receptors, and lets look at their side-effects.
+
+### First we find drugs that target nuclear receptors
+
+```{r}
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+# We create a vector of known nuclear receptor uniprot names
+nuclear_receptor_uniprot <- c(
+"Androgen receptor", "Estrogen receptor alpha", "Estrogen receptor beta", "Progesterone receptor", "Glucocorticoid receptor", "Thyroid hormone receptor alpha", "Thyroid hormone receptor beta", "Retinoic acid receptor alpha", "Retinoic acid receptor beta", "Retinoic acid receptor gamma", "Retinoid X receptor alpha", "Retinoid X receptor beta", "Retinoid X receptor gamma", "Vitamin D receptor", "Peroxisome proliferator-activated receptor gamma", "Peroxisome proliferator-activated receptor alpha", "Peroxisome proliferator-activated receptor delta", "Pregnane X receptor", "Constitutive androstane receptor", "REV-ERB alpha", "REV-ERB beta", "LXR alpha", "LXR beta", "FXR", "ROR alpha", "ROR beta", "ROR gamma", "TR2", "TR4", "TLX", "PNR", "COUP-TF alpha", "COUP-TF beta", "EAR-2", "Mineralocorticoid receptor", "MR", "Nurr1", "Nurr2", "NOR-1", "SF-1", "LRH-1", "GCNF", "DAX-1", "SHP"
+)
+
+# Then we turn it into a pattern
+nuclear_receptor_uniprot <- paste(nuclear_receptor_uniprot, collapse = "|")
+
+# And finally we filter them and remove redundant rows
+nuclear_receptor_drugs <- df |>
+  filter(str_detect(UniProt_Names, nuclear_receptor_uniprot)) |>
+  filter(!is.na(freq_lower))
+
+```
