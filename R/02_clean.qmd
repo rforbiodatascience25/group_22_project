@@ -135,6 +135,8 @@ drug_complete <- sider_se_pt |>
     indication_PT
   )
 
+drug_complete <- drug_complete |>
+  select(-"STITCH_flat", -"ATC", -"UMLS_MedDRA", -"placebo")
 # Inspect
 drug_complete
 ```
@@ -159,13 +161,58 @@ targets <- read_tsv(paste0(data_path,"drugbank_targets.tsv"))
 ## Cleaning and Merging the Drugbank datasets
 
 ```{r}
-#Merging the Drugbank datasets
+#Renaming columns
+vocabulary <- vocabulary |>
+  rename(
+    drugbank_id = "DrugBank ID",
+    accession_numbers = "Accession Numbers",
+    common_name = "Common name",
+    cas = "CAS",
+    unii = "UNII",
+    synonyms = "Synonyms",
+    standard_inchi_key = "Standard InChI Key"
+  )
+
+structures <- structures |>
+  rename(
+    drugbank_id = "DrugBank ID",
+    name = "Name",
+    cas = "CAS Number",
+    drug_groups = "Drug Groups",
+    inchikey = "InChIKey",
+    inchi = "InChI",
+    smiles = "SMILES",
+    formula = "Formula",
+    kegg_compound_id = "KEGG Compound ID",
+    kegg_drug_id = "KEGG Drug ID",
+    pubchem_compound_id = "PubChem Compound ID",
+    pubchem_substance_id = "PubChem Substance ID",
+    chebi_id = "ChEBI ID",
+    het_id = "HET ID",
+    chemspider_id = "ChemSpider ID",
+    bindingdb_id = "BindingDB ID"
+    
+  )
+
+targets <- targets |>
+  rename(
+    drugbank_id = "DrugBank ID",
+    name = "Name",
+    type = "Type",
+    uniprot_id = "UniProt ID",
+    uniprot_name = "UniProt Name"
+  )
+
+
+```
+
+```{r}
 drugbank_merged <- vocabulary |>
-  inner_join(structures, by = "DrugBank ID") |>
-  inner_join(targets, by = "DrugBank ID")
+  inner_join(structures, by = "drugbank_id") |>
+  inner_join(targets, by = "drugbank_id")
 
 #remove all duplicated collums
-drugbank_merged <- select(drugbank_merged, -"CAS Number", -"InChIKey", -"Name.x", -"Name.y", -"InChI", -"Standard InChI Key")
+drugbank_merged <- select(drugbank_merged, -"cas.x", -"cas.y", -"inchikey", -"name.x", -"name.y", -"synonyms", -"inchi", -"standard_inchi_key", -"accession_numbers", -"unii", -"kegg_compound_id", -"kegg_drug_id", -"pubchem_compound_id", -"pubchem_substance_id", -"chebi_id", -"ChEMBL ID", -"het_id", -"chemspider_id", -"bindingdb_id", -"uniprot_id", -"type")
 
 drugbank_merged
 ```
