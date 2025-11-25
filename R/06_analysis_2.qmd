@@ -20,39 +20,26 @@ source("99_proj_func.R")
 #| message: false
 #| warning: false
 data_path = "../data/"
+results_path = "../results/"
 df <- read_tsv(paste0(data_path, "merged_data.tsv"))
 ```
 
-## **Combine all side-effect for each drug into a single row** 
+## **Combine all side-effect for each drug into a single row**
 
 ```{r}
 df_drug <- df |>
-  group_by(`DrugBank ID`) |>
+  group_by(drugbank_id) |>
   summarise(
-    Accession_Numbers = first(`Accession Numbers`),
-    Common_name = first(`Common name`),
-    CAS = first(CAS),
-    UNII = first(UNII),
-    Synonyms = first(Synonyms),
-    Drug_Groups = first(`Drug Groups`),
-    SMILES = first(SMILES),
-    Formula = first(Formula),
-    KEGG_Compound_ID = first(`KEGG Compound ID`),
-    KEGG_Drug_ID = first(`KEGG Drug ID`),
-    PubChem_Compound_ID = first(`PubChem Compound ID`),
-    PubChem_Substance_ID = first(`PubChem Substance ID`),
-    ChEBI_ID = first(`ChEBI ID`),
-    ChEMBL_ID = first(`ChEMBL ID`),
-    ChemSpider_ID = first(`ChemSpider ID`),
-    BindingDB_ID = first(`BindingDB ID`),
-    Type = first(Type),
-    UniProt_IDs = first(UniProt_IDs),
-    UniProt_Names = first(UniProt_Names),
-    Molecular_weight = first(Molecular_weight),
-    HBD = first(HBD),
-    HBA = first(HBA),
-    Clog_P = first(Clog_P),
-    Lipinski = first(Lipinski),
+    common_name = first(common_name),
+    drug_groups = first(drug_groups),
+    smiles = first(smiles),
+    formula = first(formula),
+    uniprot_names = first(uniprot_names),
+    molecular_weight = first(molecular_weight),
+    hbd = first(hbd),
+    hba = first(hba),
+    clog_p = first(clog_p),
+    lipinski = first(lipinski),
     # side effects
     side_effects = str_c(unique(side_effect_PT), collapse = "; "),
     side_effect_burden = n_distinct(side_effect_PT),
@@ -65,7 +52,7 @@ df_drug <- df |>
 ```{r}
 # Histogram for H-bond donors (HBD) 
 df_drug |>
-  ggplot(aes(x = HBD,
+  ggplot(aes(x = hbd,
              y = ..count.. / sum(..count..) * 100)) +
   geom_histogram(binwidth = 1,
                  fill = "steelblue",
@@ -74,9 +61,12 @@ df_drug |>
   labs(x = "H-bond donors (HBD)",
        y = "Percentage (%)")
 
+ggsave(paste0(results_path,"Analysis2_HBD_count.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+
 # Histogram for H-bond acceptors (HBA) 
 df_drug |>
-  ggplot(aes(x = HBA,
+  ggplot(aes(x = hba,
              y = ..count.. / sum(..count..) * 100)) +
   geom_histogram(binwidth = 1,
                  fill = "steelblue",
@@ -85,10 +75,12 @@ df_drug |>
   labs(x = "H-bond acceptors (HBA)",
        y = "Percentage (%)")
 
+ggsave(paste0(results_path,"Analysis2_HBA_count.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 
 # Bar plot for Lipinski rule compliance as percentage
 df_drug |>
-  ggplot(aes(x = Lipinski,
+  ggplot(aes(x = lipinski,
              y = ..count.. / sum(..count..) * 100)) +
   geom_bar(fill = "steelblue",
            color = "black") +
@@ -96,24 +88,31 @@ df_drug |>
   labs(x = "Lipinski rule satisfied",
        y = "Percentage (%)")
 
+ggsave(paste0(results_path,"Analysis2_Lipinski_percent.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+
 
 # Density plot for Molecular Weight (MW)
 df_drug |>
-  ggplot(aes(x = Molecular_weight)) +
+  ggplot(aes(x = molecular_weight)) +
   geom_density(fill = "lightgreen",
                alpha = 0.6) +
   theme_bw() +
   labs(x = "Molecular Weight (MW)",
        y = "Density")
+ggsave(paste0(results_path,"Analysis2_MW_density.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 
 # Density plot for LogP (ClogP)
 df_drug |>
-  ggplot(aes(x = Clog_P)) +
+  ggplot(aes(x = clog_p)) +
   geom_density(fill = "lightgreen",
                alpha = 0.6) +
   theme_bw() +
   labs(x = "LogP (ClogP)",
        y = "Density")
+ggsave(paste0(results_path,"Analysis2_LogP_density.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 ```
 
 ## Correlation plots with side-effect burden
@@ -122,47 +121,87 @@ df_drug |>
 
 # HBD vs side-effect burden
 df_drug |>
-  ggplot(aes(x = HBD,
+  ggplot(aes(x = hbd,
              y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
   theme_bw() +
   labs(x = "H-bond donors (HBD)",
        y = "Number of Side Effects")
+ggsave(paste0(results_path,"Analysis2_HBD_SE.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 
 # HBA vs side-effect burden
 df_drug |>
-  ggplot(aes(x = HBA,
+  ggplot(aes(x = hba,
              y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
   theme_bw() +
   labs(x = "H-bond acceptors (HBA)",
        y = "Number of Side Effects")
 
+ggsave(paste0(results_path,"Analysis2_HBA_SE.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+
 # Molecular Weight vs side-effect burden
 df_drug |>
-  ggplot(aes(x = Molecular_weight,
+  ggplot(aes(x = molecular_weight,
              y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
   theme_bw() +
   labs(x = "Molecular Weight (MW)",
        y = "Number of Side Effects")
+ggsave(paste0(results_path,"Analysis2_MW_SE.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 
 # LogP vs side-effect burden
 df_drug |>
-  ggplot(aes(x = Clog_P,
+  ggplot(aes(x = clog_p,
              y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
   theme_bw() +
   labs(x = "LogP (ClogP)",
        y = "Number of Side Effects")
+ggsave(paste0(results_path,"Analysis2_LogP_SE.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 
 
 # Lipinski rule vs side-effect burden
 df_drug |>
-  ggplot(aes(x = Lipinski,
+  ggplot(aes(x = lipinski,
              y = side_effect_burden)) +
   geom_boxplot(fill = "steelblue", color = "black") +
   theme_bw() +
   labs(x = "Lipinski Rule Satisfied",
        y = "Number of Side Effects")
+ggsave(paste0(results_path,"Analysis2_Lipinski_SE.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+```
+
+## Legality state
+
+```{r}
+df_legal <- df_drug |>
+  separate_rows(drug_groups, sep = ";") |> 
+  mutate(drug_groups = trimws(drug_groups))     
+
+df_counts <- df_legal |>
+  group_by(drug_groups, lipinski) |>
+  summarise(n_drugs = n_distinct(common_name), .groups = "drop")
+
+
+ggplot(df_counts,
+       aes(x = drug_groups,
+           y = n_drugs,
+           fill = lipinski)) +
+  geom_bar(stat = "identity",
+           color = "black",
+           position = position_dodge()) +
+  labs(x = "Drug Group",
+       y = "Number of Unique Drugs",
+       fill = "Lipinski Rule") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(paste0(results_path,"Analysis2_Lipinski_Legal.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+
 ```
