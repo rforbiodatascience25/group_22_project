@@ -9,16 +9,9 @@ join_unique <- function(x) {
 
 count_hbd <- function(smi) {
   tryCatch({
-    # 1. Parse SMILES → CDK molecule
     mol <- parse.smiles(smi)[[1]]
-
-    # 2. Convert implicit hydrogens (CDK requirement)
     convert.implicit.to.explicit(mol)
-
-    # 3. Pass as a list to Rcpi descriptor
     dat <- extractDrugHBondDonorCount(list(mol))
-
-    # 4. Return numeric result
     dat$nHBDon
   }, error = function(e) NA)
 }
