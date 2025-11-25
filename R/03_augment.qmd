@@ -15,6 +15,8 @@ library(dplyr)
 library(stringr)
 library(rcdk)
 library(RChemMass)
+library(rJava)
+library(Rcpi)
 source("99_proj_func.R")
 ```
 
@@ -33,35 +35,34 @@ drugbank = read_tsv(paste0(data_path, "drugbank_full_clean.tsv"))
 #| message: false
 #| warning: false
 sider <- sider |>
-  rename("Common name"=drug_name)
+  rename("common_name"=drug_name)
 drugbank <- drugbank |>
-  mutate(`Common name` = str_to_lower(`Common name`)) |>
-  group_by(`DrugBank ID`) |>
+  mutate(common_name = str_to_lower(common_name)) |>
+  group_by(drugbank_id) |>
   summarise(
     across(
-      .cols = -c(`UniProt ID`, `UniProt Name`),
+      .cols = -uniprot_name,
       .fns = ~ first(.x)
     ),
-    UniProt_IDs = list(unique(`UniProt ID`)),
-    UniProt_Names = list(unique(`UniProt Name`)),
+    uniprot_names = list(unique(uniprot_name)),
     .groups = "drop"
   )
 # This takes quite some time (10-20min), but it works
 drugbank <- drugbank |>
-  drop_na(SMILES) |>
-  mutate(Molecular_weight = map_dbl(SMILES, smiles2mass)) |>
-  mutate(HBD = map_dbl(SMILES, count_hbd)) |>
-  mutate(HBA = map_dbl(SMILES, count_hba)) |>
-  mutate(Clog_P = map_dbl(SMILES, calc_clogp)) |>
-  mutate(Lipinski = HBD <= 5 &
-                    HBA <= 10 &
-                    Molecular_weight < 500 &
-                    Clog_P <= 5)
+  drop_na(smiles) |>
+  mutate(molecular_weight = map_dbl(smiles, smiles2mass)) |>
+  mutate(hbd = map_dbl(smiles, count_hbd)) |>
+  mutate(hba = map_dbl(smiles, count_hba)) |>
+  mutate(clog_p = map_dbl(smiles, calc_clogp)) |>
+  mutate(lipinski = hbd <= 5 &
+                    hba <= 10 &
+                    molecular_weight < 500 &
+                    clog_p <= 5)
 
 ```
 
 ```{r}
-df <- drugbank |> inner_join(sider, by="Common name")
+df <- drugbank |> inner_join(sider, by="common_name")
 ```
 
 ## Export as tsv
@@ -70,10 +71,7 @@ df <- drugbank |> inner_join(sider, by="Common name")
 #some issues with writing the uniprot names because of list format. this should fix. load with splitting by ";"
 df <- df |>
   mutate(
-    UniProt_IDs = map_chr(UniProt_IDs, ~ paste(.x, collapse = ";")),
-    UniProt_Names = map_chr(UniProt_Names, ~ paste(.x, collapse = ";"))
+    uniprot_names = map_chr(uniprot_names, ~ paste(.x, collapse = ";"))
   )
-
 write_tsv(df, paste0(data_path, "merged_data.tsv"))
-
 ```

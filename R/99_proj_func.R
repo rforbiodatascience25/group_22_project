@@ -7,19 +7,22 @@ join_unique <- function(x) {
     (\(v) if (length(v) == 0) NA_character_ else str_c(v, collapse = "; "))()
 }
 
-count_hbd <- function(smiles) {
+count_hbd <- function(smi) {
+  tryCatch({
+    # 1. Parse SMILES → CDK molecule
+    mol <- parse.smiles(smi)[[1]]
 
-  n_h <- stringr::str_count(smiles, "N(H)")
+    # 2. Convert implicit hydrogens (CDK requirement)
+    convert.implicit.to.explicit(mol)
 
-  # Count O–H donors
-  o_h <- stringr::str_count(smiles, "O(H)")
+    # 3. Pass as a list to Rcpi descriptor
+    dat <- extractDrugHBondDonorCount(list(mol))
 
-  n_explicit <- stringr::str_count(smiles, "\\[N[Hh][^]]*\\]")
-  o_explicit <- stringr::str_count(smiles, "\\[O[Hh][^]]*\\]")
-
-
-  n_h + o_h + n_explicit + o_explicit
+    # 4. Return numeric result
+    dat$nHBDon
+  }, error = function(e) NA)
 }
+
 
 count_hba <- function(smiles) {
 
