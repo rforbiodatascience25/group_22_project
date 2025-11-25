@@ -20,6 +20,7 @@ In this part of the data analysis, we will be exploring the SIDER and Drugbank d
 Load merged data from Drugbank and SIDER.
 
 ```{r}
+results_path = "../results/"
 df <- read_tsv("../data/merged_data.tsv")
 
 side_effect_rates <- df |>
@@ -66,7 +67,8 @@ plot_correlation <- df_se |>
     y = "Average Frequency Rate (%)"
   ) +
   theme_minimal()
-
+ggsave(paste0(results_path,"Analysis1_reports_vs_freq.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 print(plot_correlation)
 ```
 
@@ -97,13 +99,15 @@ plot_matrix <- df |>
   geom_tile() +
   scale_fill_viridis_c(name = "Co-occurences") +
   labs(
-    title = "Co-occurrence Heatmap: Top Indications vs. Side Effects",
+    title = "Co-occurrences: Top Indications vs. Side Effects",
     x = "Side Effect",
     y = "Indication"
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+ggsave(paste0(results_path,"Analysis1_co_occ_indic.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 print(plot_matrix)
 ```
 
@@ -142,9 +146,9 @@ plot_matrix_normalized_data <- df |>
 plot_matrix_normalized <- plot_matrix_normalized_data |>
   ggplot(aes(x = side_effect_PT, y = indication_PT, fill = avg_rate)) +
   geom_tile() +
-  scale_fill_viridis_c(name = "Avg. Frequency Rate (%)") +
+  scale_fill_viridis_c(name = "Avg. Frequency(%)") +
   labs(
-    title = "Co-occurrence Heatmap: Top Indications vs. Side Effects",
+    title = "Co-frequencies: Top Indications vs. Side Effects",
     x = "Side Effect",
     y = "Indication"
   ) +
@@ -155,6 +159,8 @@ plot_matrix_normalized <- plot_matrix_normalized_data |>
     plot.subtitle = element_text(hjust = 0.5)
   )
 
+ggsave(paste0(results_path,"Analysis1_co_occ_indic_freq.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 # show plot
 plot_matrix_normalized
 ```
@@ -182,18 +188,20 @@ plot_targets_se <- df |>
     side_effect_PT %in% top_side_effects
   ) |>
   count(uniprot_first, side_effect_PT) |>
-  mutate(uniprot_first = str_trunc(uniprot_first, 40)) |>
+  mutate(uniprot_first = str_trunc(uniprot_first, 30)) |>
   ggplot(aes(x = side_effect_PT, y = uniprot_first, fill = n)) +
   geom_tile() +
   scale_fill_viridis_c(name = "Co-occurrences") +
   labs(
-    title = "Protein Targets vs. Side Effects",
+    title = "Co-occurrences: Protein Targets vs. Side Effects",
     x = "Side Effect",
     y = "Protein Target"
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+ggsave(paste0(results_path,"Analysis1_co_occ_targets.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 print(plot_targets_se)
 ```
 
@@ -230,6 +238,8 @@ plot_targets_vs_se <- drug_targets_se |>
   ) +
   theme_minimal()
 
+ggsave(paste0(results_path,"Analysis1_targets_se_correl.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 print(plot_targets_vs_se)
 ```
 
@@ -265,6 +275,8 @@ plot_indications_vs_se <- drug_indications_se |>
   ) +
   theme_minimal()
 
+ggsave(paste0(results_path,"Analysis1_indications_se_correl.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 print(plot_indications_vs_se)
 ```
 

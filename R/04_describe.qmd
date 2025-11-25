@@ -95,7 +95,7 @@ combined_data <- bind_rows(
 )
 
 # Violin plot
-ggplot(combined_data, aes(x = category, y = count, fill = category)) +
+violin_plot <- ggplot(combined_data, aes(x = category, y = count, fill = category)) +
   geom_violin(alpha = 0.7) +
   geom_boxplot(width = 0.1, fill = "white", outlier.shape = NA) +
   scale_y_log10() +
@@ -106,6 +106,10 @@ ggplot(combined_data, aes(x = category, y = count, fill = category)) +
   ) +
   theme_minimal() +
   theme(legend.position = "none")
+
+ggsave(paste0(results_path,"Description_violin_plot.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+print(violin_plot)
 ```
 
 We see a distribution that is centered about the average value for the number of side effects per drug, while the side effects distribution is much more skewed. Drugs have a lot of side effects, but side effects are often specific although with a small amount of side effects being experienced in a large amount of drugs, side effects such as nausea, headache, stomach ache etc. Drugs with many side effects include pregabalin and testosterone.
