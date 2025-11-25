@@ -131,9 +131,12 @@ dir.create(drugbank_path, recursive = TRUE, showWarnings = FALSE)
 
 # Files to download
 urls <- c(
-  vocabulary = "https://go.drugbank.com/releases/5-1-13/downloads/all-drugbank-vocabulary",
-  structures = "https://go.drugbank.com/releases/5-1-13/downloads/all-structure-links",
-  targets    = "https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links"
+  vocabulary = 
+    "https://go.drugbank.com/releases/5-1-13/downloads/all-drugbank-vocabulary",
+  structures = 
+    "https://go.drugbank.com/releases/5-1-13/downloads/all-structure-links",
+  targets    = 
+    "https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links"
 )
 
 zip_paths <- file.path(drugbank_path, paste0("drugbank_", names(urls), ".zip"))

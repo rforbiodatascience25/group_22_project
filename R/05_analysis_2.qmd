@@ -11,13 +11,16 @@ library(stringr)
 
 ```{r}
 # We define keywords for known hormonal targets.
-hormone_targets <- c("estrogen","androgen","progesterone","glucocorticoid","thyroid","mineralocorticoid")
+hormone_targets <- c("estrogen","androgen","progesterone","glucocorticoid",
+                     "thyroid","mineralocorticoid")
 
 # We turn this into a pattern
 hormone_pattern <- paste(hormone_targets, collapse="|")
 
 # And add a column for whether the drug targets hormonal receptors
-hormonal_drugs <- df |> mutate(hormone_target = str_detect(tolower(UniProt_Names), hormone_pattern))
+hormonal_drugs <- df |> mutate(
+  hormone_target = str_detect(tolower(UniProt_Names), hormone_pattern)
+  )
 
 # Then we check how many TRUEs did we get, if any at all?
 table(hormonal_drugs$hormone_target, useNA = "ifany")
@@ -34,7 +37,9 @@ endo_terms <- c("Gyne", "Hormon", "Menstru", "Sex", "Endocr")
 endo_pattern <- paste(endo_terms, collapse = "|")
 
 # And add a column for whether the drug has endocrine side effects
-hormonal_drugs_endo_targets <- hormonal_drugs |> mutate(endocrine_se = str_detect(side_effect_PT, paste(endo_terms, collapse="|")))
+hormonal_drugs_endo_targets <- hormonal_drugs |> mutate(
+  endocrine_se = str_detect(side_effect_PT, paste(endo_terms, collapse="|"))
+  )
 
 # Then we check how many TRUEs did we get, if any at all?
 table(hormonal_drugs_endo_targets$endocrine_se, useNA = "ifany")
@@ -48,7 +53,9 @@ hormonal_drugs_endo_targets |>
   group_by(hormone_target) |>
   summarise(prop_endocrine = mean(endocrine_se)) |>
   mutate(
-    hormone_target = ifelse(hormone_target, "Hormonal target", "Non-hormonal target")
+    hormone_target = ifelse(
+      hormone_target, "Hormonal target", "Non-hormonal target"
+      )
   ) |>
   ggplot(aes(x = hormone_target, y = prop_endocrine, fill = hormone_target)) +
   geom_col(width = 0.6, color = "black", alpha = 0.85) +
@@ -68,7 +75,8 @@ hormonal_drugs_endo_targets |>
     axis.text.x = element_text(face = "bold")
   )
 
-ggsave("../results/Analysis1.2_Endocrine.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
+ggsave("../results/Analysis1.2_Endocrine.png", plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 
 ```
 
@@ -113,7 +121,9 @@ In this case, we restrict ourselves to three types of stress-axis receptors. The
 sa_receptor_pattern <- "glucocorticoid|mineralocorticoid|corticoid"
 
 # Add a collumn for the targets
-sa_receptor_metabolic_se <- metabolic_se |> mutate(sa_target = str_detect(tolower(UniProt_Names), sa_receptor_pattern))
+sa_receptor_metabolic_se <- metabolic_se |> mutate(
+  sa_target = str_detect(tolower(UniProt_Names), sa_receptor_pattern)
+  )
 
 # Then we check how many TRUEs did we get, if any at all?
 table(sa_receptor_metabolic_se$sa_target, useNA = "ifany")
@@ -127,7 +137,9 @@ sa_receptor_metabolic_se |>
   group_by(sa_target) |>
   summarise(prop_metab = mean(metab)) |>
   mutate(
-    sa_target = ifelse(sa_target, "Stress-axis target", "Non-stress-axis target")
+    sa_target = ifelse(
+      sa_target, "Stress-axis target", "Non-stress-axis target"
+      )
   ) |>
   ggplot(aes(x = sa_target, y = prop_metab, fill = sa_target)) +
   geom_col(width = 0.6, color = "black", alpha = 0.85) +
@@ -149,7 +161,8 @@ sa_receptor_metabolic_se |>
     axis.text.x = element_text(face = "bold")
   )
 
-ggsave("../results/Analysis1.2_Metabolic.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
+ggsave("../results/Analysis1.2_Metabolic.png", plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
 
 ```
 
