@@ -68,6 +68,8 @@ hormonal_drugs_endo_targets |>
     axis.text.x = element_text(face = "bold")
   )
 
+ggsave("..\results\Analysis1.2_Endocrine.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
+
 ```
 
 ```{r}
@@ -146,6 +148,8 @@ sa_receptor_metabolic_se |>
     legend.position = "none",
     axis.text.x = element_text(face = "bold")
   )
+
+ggsave("..\results\Analysis1.2_Metabolic.png", plot = last_plot(), width = 8, height = 6, dpi = 300)
 
 ```
 
