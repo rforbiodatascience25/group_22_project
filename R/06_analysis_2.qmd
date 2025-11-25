@@ -23,6 +23,146 @@ data_path = "../data/"
 df <- read_tsv(paste0(data_path, "merged_data.tsv"))
 ```
 
+## **Combine all side-effect for each drug into a single row** 
+
 ```{r}
-df
+df_drug <- df |>
+  group_by(`DrugBank ID`) |>
+  summarise(
+    Accession_Numbers = first(`Accession Numbers`),
+    Common_name = first(`Common name`),
+    CAS = first(CAS),
+    UNII = first(UNII),
+    Synonyms = first(Synonyms),
+    Drug_Groups = first(`Drug Groups`),
+    SMILES = first(SMILES),
+    Formula = first(Formula),
+    KEGG_Compound_ID = first(`KEGG Compound ID`),
+    KEGG_Drug_ID = first(`KEGG Drug ID`),
+    PubChem_Compound_ID = first(`PubChem Compound ID`),
+    PubChem_Substance_ID = first(`PubChem Substance ID`),
+    ChEBI_ID = first(`ChEBI ID`),
+    ChEMBL_ID = first(`ChEMBL ID`),
+    ChemSpider_ID = first(`ChemSpider ID`),
+    BindingDB_ID = first(`BindingDB ID`),
+    Type = first(Type),
+    UniProt_IDs = first(UniProt_IDs),
+    UniProt_Names = first(UniProt_Names),
+    Molecular_weight = first(Molecular_weight),
+    HBD = first(HBD),
+    HBA = first(HBA),
+    Clog_P = first(Clog_P),
+    Lipinski = first(Lipinski),
+    # side effects
+    side_effects = str_c(unique(side_effect_PT), collapse = "; "),
+    side_effect_burden = n_distinct(side_effect_PT),
+    .groups = "drop"
+  )
+```
+
+## Distributions of Lipinski-related descriptors
+
+```{r}
+# Histogram for H-bond donors (HBD) 
+df_drug |>
+  ggplot(aes(x = HBD,
+             y = ..count.. / sum(..count..) * 100)) +
+  geom_histogram(binwidth = 1,
+                 fill = "steelblue",
+                 color = "black") +
+  theme_bw() +
+  labs(x = "H-bond donors (HBD)",
+       y = "Percentage (%)")
+
+# Histogram for H-bond acceptors (HBA) 
+df_drug |>
+  ggplot(aes(x = HBA,
+             y = ..count.. / sum(..count..) * 100)) +
+  geom_histogram(binwidth = 1,
+                 fill = "steelblue",
+                 color = "black") +
+  theme_bw() +
+  labs(x = "H-bond acceptors (HBA)",
+       y = "Percentage (%)")
+
+
+# Bar plot for Lipinski rule compliance as percentage
+df_drug |>
+  ggplot(aes(x = Lipinski,
+             y = ..count.. / sum(..count..) * 100)) +
+  geom_bar(fill = "steelblue",
+           color = "black") +
+  theme_bw() +
+  labs(x = "Lipinski rule satisfied",
+       y = "Percentage (%)")
+
+
+# Density plot for Molecular Weight (MW)
+df_drug |>
+  ggplot(aes(x = Molecular_weight)) +
+  geom_density(fill = "lightgreen",
+               alpha = 0.6) +
+  theme_bw() +
+  labs(x = "Molecular Weight (MW)",
+       y = "Density")
+
+# Density plot for LogP (ClogP)
+df_drug |>
+  ggplot(aes(x = Clog_P)) +
+  geom_density(fill = "lightgreen",
+               alpha = 0.6) +
+  theme_bw() +
+  labs(x = "LogP (ClogP)",
+       y = "Density")
+```
+
+## Correlation plots with side-effect burden
+
+```{r}
+
+# HBD vs side-effect burden
+df_drug |>
+  ggplot(aes(x = HBD,
+             y = side_effect_burden)) +
+  geom_point(color = "steelblue", alpha = 0.6) +
+  theme_bw() +
+  labs(x = "H-bond donors (HBD)",
+       y = "Number of Side Effects")
+
+# HBA vs side-effect burden
+df_drug |>
+  ggplot(aes(x = HBA,
+             y = side_effect_burden)) +
+  geom_point(color = "steelblue", alpha = 0.6) +
+  theme_bw() +
+  labs(x = "H-bond acceptors (HBA)",
+       y = "Number of Side Effects")
+
+# Molecular Weight vs side-effect burden
+df_drug |>
+  ggplot(aes(x = Molecular_weight,
+             y = side_effect_burden)) +
+  geom_point(color = "steelblue", alpha = 0.6) +
+  theme_bw() +
+  labs(x = "Molecular Weight (MW)",
+       y = "Number of Side Effects")
+
+# LogP vs side-effect burden
+df_drug |>
+  ggplot(aes(x = Clog_P,
+             y = side_effect_burden)) +
+  geom_point(color = "steelblue", alpha = 0.6) +
+  theme_bw() +
+  labs(x = "LogP (ClogP)",
+       y = "Number of Side Effects")
+
+
+# Lipinski rule vs side-effect burden
+df_drug |>
+  ggplot(aes(x = Lipinski,
+             y = side_effect_burden)) +
+  geom_boxplot(fill = "steelblue", color = "black") +
+  theme_bw() +
+  labs(x = "Lipinski Rule Satisfied",
+       y = "Number of Side Effects")
 ```
