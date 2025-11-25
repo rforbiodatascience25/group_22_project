@@ -67,6 +67,13 @@ df <- drugbank |> inner_join(sider, by="Common name")
 ## Export as tsv
 
 ```{r}
-#| message: false
-write_tsv(df, paste0(data_path,"merged_data.tsv"))
+#some issues with writing the uniprot names because of list format. this should fix. load with splitting by ";"
+df <- df |>
+  mutate(
+    UniProt_IDs = map_chr(UniProt_IDs, ~ paste(.x, collapse = ";")),
+    UniProt_Names = map_chr(UniProt_Names, ~ paste(.x, collapse = ";"))
+  )
+
+write_tsv(df, paste0(data_path, "merged_data.tsv"))
+
 ```

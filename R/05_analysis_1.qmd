@@ -19,30 +19,13 @@ In this part of the data analysis, we will be exploring the SIDER dataset. Etc.e
 Load merged data from drugbank and SIDER
 
 ```{r}
-####| message: false
-####| warning: false
-#load data
-merged_data <- read_tsv("../data/merged_data.tsv")
-#view the columns
-head(merged_data)
-```
+df <- read_tsv("../data/merged_data.tsv") |>
+  mutate(
+    UniProt_IDs = str_split(UniProt_IDs, ";"),
+    UniProt_Names = str_split(UniProt_Names, ";")
+  )
 
-```{r}
-# Count the most common side effects
-common_side_effects <- merged_data |>
-  count(side_effect_PT, sort = TRUE)
-
-# Which drugs has the most reported side effects
-top_drugs_by_toxicity <- merged_data |>
-  count(`Common name`, sort = TRUE)
-
-# View results
-head(common_side_effects)
-head(top_drugs_by_toxicity)
-```
-
-```{r}
-side_effect_rates <- merged_data |>
+side_effect_rates <- df |>
   mutate(percentages = str_extract_all(freq_text, "\\d+\\.?\\d*(?=%)")) |>
   unnest_longer(percentages) |>
   mutate(percentages = as.numeric(percentages)) |>
@@ -63,14 +46,14 @@ side_effect_rates |> arrange(desc(n_reports))
 
 ```{r}
 # Filter once so both correlation and plot use the exact same data
-df <- side_effect_rates
+df_se <- side_effect_rates
 
 # Compute and print the correlation
-correlation <- cor(df$n_reports, df$avg_rate, use = "complete.obs")
+correlation <- cor(df_se$n_reports, df_se$avg_rate, use = "complete.obs")
 print(paste("Correlation between number of reports and average frequency rate:", round(correlation, 3)))
 
 # Plot
-plot_correlation <- df |>
+plot_correlation <- df_se |>
   ggplot(aes(x = n_reports, y = avg_rate)) +
   #ggplot(aes(x = n_percentage_mentions, y = avg_rate)) +
   geom_point(alpha = 0.5, color = "darkcyan") +
@@ -89,18 +72,18 @@ print(plot_correlation)
 ```{r}
 # Can we show correlation between illness treatment and side effect
 # We filter for the top 20 items to keep the plot readable
-top_indications <- merged_data |>
+top_indications <- df |>
   separate_rows(indication_PT, sep = ";\\s*") |>
   count(indication_PT, sort = TRUE) |>
   head(20) |>
   pull(indication_PT)
 
-top_side_effects <- merged_data |>
+top_side_effects <- df |>
   count(side_effect_PT, sort = TRUE) |>
   head(20) |>
   pull(side_effect_PT)
 
-plot_matrix <- merged_data |>
+plot_matrix <- df |>
   separate_rows(indication_PT, sep = ";\\s*") |>
   filter(
     indication_PT %in% top_indications,
@@ -109,7 +92,7 @@ plot_matrix <- merged_data |>
   count(indication_PT, side_effect_PT) |>
   ggplot(aes(x = side_effect_PT, y = indication_PT, fill = n)) +
   geom_tile() +
-  scale_fill_viridis_c() +
+  scale_fill_viridis_c(name = "Co-occurences") +
   labs(
     title = "Co-occurrence Heatmap: Top Indications vs. Side Effects",
     x = "Side Effect",
@@ -122,7 +105,7 @@ print(plot_matrix)
 ```
 
 ```{r}
-plot_matrix_normalized_data <- merged_data |>
+plot_matrix_normalized_data <- df |>
   # extract % values
   mutate(percentages = str_extract_all(freq_text, "\\d+\\.?\\d*(?=%)")) |>
   # unnest so each percentage gets its own row 
@@ -141,16 +124,13 @@ plot_matrix_normalized_data <- merged_data |>
   # group by indication–side effect pair
   group_by(indication_PT, side_effect_PT) |>
   
-  # 7. Summarize: true pooled average frequency + supporting stats
+  # get the stats
   summarise(
     avg_rate = mean(percentages, na.rm = TRUE),
     n_percentage_mentions = n(),
     n_drugs_contributing = n_distinct(`DrugBank ID`),
     .groups = "drop"
-  ) |>
-  
-  # Optional: filter out pairs with too little frequency data
-  filter(n_percentage_mentions >= 2)
+  )
 ```
 
 ```{r}
@@ -172,4 +152,70 @@ plot_matrix_normalized <- plot_matrix_normalized_data |>
 
 # show plot
 plot_matrix_normalized
+```
+
+```{r}
+# Uniprot is so weird, but this fixes it
+df_targets <- df |>
+  unnest_longer(UniProt_Names) |>
+  separate_rows(UniProt_Names, sep = ";\\s*") |>
+  filter(!is.na(UniProt_Names), UniProt_Names != "")
+
+# Get top targets and side effects
+top_targets <- df_targets |>
+  count(UniProt_Names, sort = TRUE) |>
+  head(20) |>
+  pull(UniProt_Names)
+
+top_side_effects <- df |>
+  count(side_effect_PT, sort = TRUE) |>
+  head(20) |>
+  pull(side_effect_PT)
+
+# Plot heatmap
+plot_targets_se <- df_targets |>
+  filter(
+    UniProt_Names %in% top_targets,
+    side_effect_PT %in% top_side_effects
+  ) |>
+  count(UniProt_Names, side_effect_PT) |>
+  ggplot(aes(x = side_effect_PT, y = UniProt_Names, fill = n)) +
+  geom_tile() +
+  scale_fill_viridis_c(name = "Co-occurrences") +
+  labs(
+    title = "Protein Targets vs. Side Effects",
+    x = "Side Effect",
+    y = "Protein Target"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(plot_targets_se)
+```
+
+```{r}
+# Normalized by average frequency rate
+plot_targets_se_freq <- df_targets |>
+  mutate(percentages = str_extract_all(freq_text, "\\d+\\.?\\d*(?=%)")) |>
+  unnest_longer(percentages) |>
+  mutate(percentages = as.numeric(percentages)) |>
+  filter(
+    !is.na(percentages),
+    UniProt_Names %in% top_targets,
+    side_effect_PT %in% top_side_effects
+  ) |>
+  group_by(UniProt_Names, side_effect_PT) |>
+  summarise(avg_rate = mean(percentages), .groups = "drop") |>
+  ggplot(aes(x = side_effect_PT, y = UniProt_Names, fill = avg_rate)) +
+  geom_tile() +
+  scale_fill_viridis_c(name = "Avg. Rate (%)") +
+  labs(
+    title = "Protein Targets vs. Side Effect Frequency",
+    x = "Side Effect",
+    y = "Protein Target"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(plot_targets_se_freq)
 ```

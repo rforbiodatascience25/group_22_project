@@ -1,0 +1,29 @@
+---
+title: "04_describe"
+format: html
+---
+
+# Data description
+
+In this document we go over the SIDER and Drugbank datasets to get an overview of how it looks.
+
+```{r}
+####| message: false
+####| warning: false
+df <- read_tsv("../data/merged_data.tsv") |>
+  mutate(
+    UniProt_IDs = str_split(UniProt_IDs, ";"),
+    UniProt_Names = str_split(UniProt_Names, ";")
+  )
+# Count the most common side effects
+common_side_effects <- df |>
+  count(side_effect_PT, sort = TRUE)
+
+# Which drugs has the most reported side effects
+top_drugs_by_toxicity <- df |>
+  count(`Common name`, sort = TRUE)
+
+# View results
+head(common_side_effects)
+head(top_drugs_by_toxicity)
+```
