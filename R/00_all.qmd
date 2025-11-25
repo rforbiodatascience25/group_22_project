@@ -3,3 +3,24 @@ title: "00_all"
 format: html
 ---
 
+```{r}
+# Render all project files in order
+
+# Vector of qmd files in pipeline order
+qmd_files <- c(
+  "01_load.qmd",
+  "02_clean.qmd",
+  "03_augment.qmd",
+  "04_describe.qmd",
+  "05_analysis_1.qmd",
+  "06_analysis_2.qmd",
+  "99_proj_func.qmd"
+)
+
+# Render each file
+# Requires the 'quarto' R package to be installed
+for (f in qmd_files) {
+  message("Rendering: ", f)
+  quarto::quarto_render(f)
+}
+```
