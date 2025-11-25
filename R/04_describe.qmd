@@ -13,8 +13,7 @@ library(tidyverse)
 ####| warning: false
 df <- read_tsv("../data/merged_data.tsv") |>
   mutate(
-    UniProt_IDs = str_split(UniProt_IDs, ";"),
-    UniProt_Names = str_split(UniProt_Names, ";")
+    uniprot_names = str_split(uniprot_names, ";")
   )
 # Count the most common side effects
 common_side_effects <- df |>
@@ -22,7 +21,7 @@ common_side_effects <- df |>
 
 # Which drugs has the most reported side effects
 top_drugs_by_toxicity <- df |>
-  count(`Common name`, sort = TRUE)
+  count(common_name, sort = TRUE)
 
 # View results
 head(df)
@@ -73,7 +72,7 @@ A quick check determines that the average side effect is listed 28.5 times but t
 ```{r}
 print(mean(top_drugs_by_toxicity$n))
 print(quantile(top_drugs_by_toxicity$n))
-print(length(unique(top_drugs_by_toxicity$`Common name`)))
+print(length(unique(top_drugs_by_toxicity$common_name)))
 ```
 
 We see a similar trend in the distribution of how many side effects are associated with each drug.
@@ -86,7 +85,7 @@ side_effect_counts <- df |>
 
 # Drug side effect count
 drug_side_effect_counts <- df |> 
-  group_by(`Common name`) |> 
+  group_by(common_name) |> 
   summarise(count = n(), .groups = "drop")
 
 # Combine for plotting
