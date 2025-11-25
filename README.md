@@ -14,6 +14,7 @@ R/
   01_load.qmd           Download SIDER and DrugBank data
   02_clean.qmd          Clean and merge datasets
   03_augment.qmd        Add physicochemical descriptors
+  04_describe.qmd       Describes the variables withing our Dataset
   05_analysis_1.qmd     Global analyses (side effects, targets, indications)
   05_analysis_2.qmd     Targeted analyses (hormonal and stress-axis receptors)
   06_analysis_2.qmd     Descriptor distributions and side-effect burden
@@ -47,7 +48,11 @@ Lipinski rule indicator
 
 Merges SIDER and DrugBank into a single dataset (merged_data.tsv).
 
-## 4. Global Analyses (05_analysis_1.qmd)
+## 4. Describe (04_describe.qmd)
+
+Describes all the variable names within our dataset, also describes the data itself and shows initial plots.
+
+## 5. Global Analyses (05_analysis_1.qmd)
 
 Examines:
 
@@ -59,7 +64,7 @@ Co-occurrence patterns (indications vs. side effects, protein targets vs. side e
 
 Normalized heatmaps using average frequency rates
 
-## 5. Targeted Receptor Analyses (05_analysis_2.qmd)
+## 6. Targeted Receptor Analyses (05_analysis_2.qmd)
 
 Tests expected biological relationships:
 
@@ -69,7 +74,7 @@ Drugs targeting stress-axis receptors show higher proportions of metabolic side 
 
 Corresponding figures are saved in results/.
 
-## 6. Descriptor and Burden Analysis (06_analysis_2.qmd)
+## 7. Descriptor and Burden Analysis (06_analysis_2.qmd)
 
 Aggregates side effects per drug and evaluates relationships between:
 
@@ -83,7 +88,7 @@ Includes distribution plots and scatter/boxplots.
 
 ---
 
-#Reproducibility
+# Reproducibility
 
 Required packages include:
 tidyverse, purrr, readr, stringr, curl, rcdk, and RChemMass.
