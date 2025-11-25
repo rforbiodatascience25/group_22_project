@@ -8,22 +8,19 @@ editor: visual
 
 ```{r}
 #| message: false
+#| warning: false
 library(tidyverse)
 source("99_proj_func.R")
 ```
 
 # Data analysis 1
 
-In this part of the data analysis, we will be exploring the SIDER dataset. Etc.etc.
+In this part of the data analysis, we will be exploring the SIDER and Drugbank datasets.
 
-Load merged data from drugbank and SIDER
+Load merged data from Drugbank and SIDER.
 
 ```{r}
-df <- read_tsv("../data/merged_data.tsv") |>
-  mutate(
-    UniProt_IDs = str_split(UniProt_IDs, ";"),
-    UniProt_Names = str_split(UniProt_Names, ";")
-  )
+df <- read_tsv("../data/merged_data.tsv")
 
 side_effect_rates <- df |>
   mutate(percentages = str_extract_all(freq_text, "\\d+\\.?\\d*(?=%)")) |>
@@ -33,16 +30,20 @@ side_effect_rates <- df |>
   summarise(
     avg_rate = mean(percentages, na.rm = TRUE),
     median_rate = median(percentages, na.rm = TRUE),
-    n_reports = n_distinct(`DrugBank ID`),  # or however you define a "report"
+    n_reports = n_distinct(`drugbank_id`),  # or however you define a "report"
     n_percentage_mentions = sum(!is.na(percentages)),
     .groups = "drop"
   ) |>
   filter(n_percentage_mentions > 0)
 ```
 
+Let's just check what we're dealing with here
+
 ```{r}
 side_effect_rates |> arrange(desc(n_reports))
 ```
+
+Nausea, headache, vomiting, dizziness are all among the top reported side effects which seems to make sense.
 
 ```{r}
 # Filter once so both correlation and plot use the exact same data
@@ -68,6 +69,8 @@ plot_correlation <- df_se |>
 
 print(plot_correlation)
 ```
+
+Here we checked the average reported frequency of a side effect dependent on how many times it was reported. There may seem to be a small trend that very common side effects are more often reported than more niche side effects, and the variance in low number of reports is quite high. Common side effects might be easier to report since more data points will occur and it's more variable with few reports on rare data points.
 
 ```{r}
 # Can we show correlation between illness treatment and side effect
@@ -104,6 +107,8 @@ plot_matrix <- df |>
 print(plot_matrix)
 ```
 
+This co-occurrence matrix is meant to show if specific common side effects are tied to specific treatment indications. The data is hard to analyze as we can see that Nausea and Vomiting is tied to Infection which also seems to be a common effect of Infections in general. This illustration seems to just show the most common reports. To combat this we can use the frequencies instead, which is in the next plot.
+
 ```{r}
 plot_matrix_normalized_data <- df |>
   # extract % values
@@ -128,7 +133,7 @@ plot_matrix_normalized_data <- df |>
   summarise(
     avg_rate = mean(percentages, na.rm = TRUE),
     n_percentage_mentions = n(),
-    n_drugs_contributing = n_distinct(`DrugBank ID`),
+    n_drugs_contributing = n_distinct(drugbank_id),
     .groups = "drop"
   )
 ```
@@ -139,7 +144,7 @@ plot_matrix_normalized <- plot_matrix_normalized_data |>
   geom_tile() +
   scale_fill_viridis_c(name = "Avg. Frequency Rate (%)") +
   labs(
-    title = "Normalized Co-occurrence Heatmap: Top Indications vs. Side Effects",
+    title = "Co-occurrence Heatmap: Top Indications vs. Side Effects",
     x = "Side Effect",
     y = "Indication"
   ) +
@@ -154,18 +159,15 @@ plot_matrix_normalized <- plot_matrix_normalized_data |>
 plot_matrix_normalized
 ```
 
-```{r}
-# Uniprot is so weird, but this fixes it
-df_targets <- df |>
-  unnest_longer(UniProt_Names) |>
-  separate_rows(UniProt_Names, sep = ";\\s*") |>
-  filter(!is.na(UniProt_Names), UniProt_Names != "")
+This frequency matrix shows instead where a large % of side effects are experienced. In drugs that are used to treat breast cancer we often see Diarrhoea, Nausea, Feeling abnormal and Vomiting which may be expected which such a serious illness. Neoplasm is tumor growth and we see frequent Nausea and Gastrointenstinal pain, which again makes sense. We can also see that Hypertension rarely leads to any of these side effects when treated. Some of the serious diseases seem to be more yellow on the chart which might make sense as a more side effects may be allowed.
 
+```{r}
 # Get top targets and side effects
-top_targets <- df_targets |>
-  count(UniProt_Names, sort = TRUE) |>
+top_targets <- df |>
+  mutate(uniprot_first = str_extract(uniprot_names, "^[^;]+")) |> 
+  count(uniprot_first, sort = TRUE) |>
   head(20) |>
-  pull(UniProt_Names)
+  pull(uniprot_first)
 
 top_side_effects <- df |>
   count(side_effect_PT, sort = TRUE) |>
@@ -173,13 +175,15 @@ top_side_effects <- df |>
   pull(side_effect_PT)
 
 # Plot heatmap
-plot_targets_se <- df_targets |>
+plot_targets_se <- df |>
+  mutate(uniprot_first = str_extract(uniprot_names, "^[^;]+")) |>
   filter(
-    UniProt_Names %in% top_targets,
+    uniprot_first %in% top_targets,
     side_effect_PT %in% top_side_effects
   ) |>
-  count(UniProt_Names, side_effect_PT) |>
-  ggplot(aes(x = side_effect_PT, y = UniProt_Names, fill = n)) +
+  count(uniprot_first, side_effect_PT) |>
+  mutate(uniprot_first = str_trunc(uniprot_first, 40)) |>
+  ggplot(aes(x = side_effect_PT, y = uniprot_first, fill = n)) +
   geom_tile() +
   scale_fill_viridis_c(name = "Co-occurrences") +
   labs(
@@ -193,29 +197,75 @@ plot_targets_se <- df_targets |>
 print(plot_targets_se)
 ```
 
-```{r}
-# Normalized by average frequency rate
-plot_targets_se_freq <- df_targets |>
-  mutate(percentages = str_extract_all(freq_text, "\\d+\\.?\\d*(?=%)")) |>
-  unnest_longer(percentages) |>
-  mutate(percentages = as.numeric(percentages)) |>
-  filter(
-    !is.na(percentages),
-    UniProt_Names %in% top_targets,
-    side_effect_PT %in% top_side_effects
-  ) |>
-  group_by(UniProt_Names, side_effect_PT) |>
-  summarise(avg_rate = mean(percentages), .groups = "drop") |>
-  ggplot(aes(x = side_effect_PT, y = UniProt_Names, fill = avg_rate)) +
-  geom_tile() +
-  scale_fill_viridis_c(name = "Avg. Rate (%)") +
-  labs(
-    title = "Protein Targets vs. Side Effect Frequency",
-    x = "Side Effect",
-    y = "Protein Target"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+Here we can see some co-occurrences between what biological target/receptor is treated and what type of side effect is experienced, but this requires a further deep dive.
 
-print(plot_targets_se_freq)
+```{r}
+# plot biological targets vs side effects
+# Calculate per-drug metrics
+drug_targets_se <- df |>
+  group_by(drugbank_id, common_name) |>
+  summarise(
+    # Count unique targets
+    n_targets = n_distinct(unlist(str_split(uniprot_names, ";\\s*"))),
+    # Count unique side effects
+    n_side_effects = n_distinct(side_effect_PT),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(n_targets), n_targets > 0)
+
+# Compute correlation
+cor_targets <- cor(drug_targets_se$n_targets, drug_targets_se$n_side_effects, 
+                   use = "complete.obs")
+
+# 
+plot_targets_vs_se <- drug_targets_se |>
+  ggplot(aes(x = n_targets, y = n_side_effects)) +
+  geom_point(alpha = 0.4, color = "steelblue") +
+  geom_smooth(method = "lm", color = "red", se = TRUE) +
+  labs(
+    title = "Number of Biological Targets vs. Number of Side Effects",
+    subtitle = paste("Correlation:", round(cor_targets, 3)),
+    x = "Number of Protein Targets",
+    y = "Number of Unique Side Effects"
+  ) +
+  theme_minimal()
+
+print(plot_targets_vs_se)
 ```
+
+We see no explicit relation between the amount of protein targets a given drug has versus the amount of side effects it gives, which is surprising.
+
+```{r}
+# plot indications vs side effects
+drug_indications_se <- df |>
+  group_by(drugbank_id, common_name) |>
+  summarise(
+    # Count unique indications
+    n_indications = n_distinct(unlist(str_split(indication_PT, ";\\s*"))),
+    # Count unique side effects
+    n_side_effects = n_distinct(side_effect_PT),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(n_indications), n_indications > 0)
+
+# Compute correlation
+cor_indications <- cor(drug_indications_se$n_indications, drug_indications_se$n_side_effects,
+                       use = "complete.obs")
+
+# Plot
+plot_indications_vs_se <- drug_indications_se |>
+  ggplot(aes(x = n_indications, y = n_side_effects)) +
+  geom_point(alpha = 0.4, color = "darkgreen") +
+  geom_smooth(method = "lm", color = "red", se = TRUE) +
+  labs(
+    title = "Indications vs. Side Effects",
+    subtitle = paste("Correlation:", round(cor_indications, 3)),
+    x = "Number of Indications",
+    y = "Number of Unique Side Effects"
+  ) +
+  theme_minimal()
+
+print(plot_indications_vs_se)
+```
+
+We do see some amount of correlated behavior between how many indications a drug targets or treats and how many side effects are listed. This is surprising compared to the former plot, but might be explained by the fact that more indications on a drug potentially means that it might have been studied more and therefore more side effects appeared.

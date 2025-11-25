@@ -9,8 +9,8 @@ In this document we go over the SIDER and Drugbank datasets to get an overview o
 
 ```{r}
 library(tidyverse)
-####| message: false
-####| warning: false
+#| message: false
+#| warning: false
 df <- read_tsv("../data/merged_data.tsv") |>
   mutate(
     uniprot_names = str_split(uniprot_names, ";")
@@ -43,13 +43,13 @@ For the merged dataframe of Drugbank and SIDER we have the following central val
 
 -   UniProt Names: determines the name of the biological receptors targeted
 
--   HBD
+-   HBD (Hydrogen Bond Donors): the number of hydrogen atoms in the molecule that can donate a hydrogen bond (typically –OH and –NH groups).
 
--   HBA
+-   HBA (Hydrogen Bond Acceptors): the number of atoms in the molecule that can accept a hydrogen bond (typically O, N, S atoms with lone pairs).
 
--   Clog_P
+-   Clog P: the calculated logarithm of the partition coefficient (P) between octanol and water; a measure of the compound’s lipophilicity.
 
--   Lipinksi: whether the drug is within the Lipinski standards
+-   Lipinski: whether the molecule follows Lipinski’s Rule of Five (only 4 rules though) (MW ≤ 500, Clog P ≤ 5, HBD ≤ 5, HBA ≤ 10), indicating good likelihood of oral bioavailability.
 
 -   side_effect_PT: what side effects are listed with a certain drug
 
@@ -107,3 +107,5 @@ ggplot(combined_data, aes(x = category, y = count, fill = category)) +
   theme_minimal() +
   theme(legend.position = "none")
 ```
+
+We see a distribution that is centered about the average value for the number of side effects per drug, while the side effects distribution is much more skewed. Drugs have a lot of side effects, but side effects are often specific although with a small amount of side effects being experienced in a large amount of drugs, side effects such as nausea, headache, stomach ache etc. Drugs with many side effects include pregabalin and testosterone.
