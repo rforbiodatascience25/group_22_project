@@ -131,9 +131,12 @@ dir.create(drugbank_path, recursive = TRUE, showWarnings = FALSE)
 
 # Files to download
 urls <- c(
-  vocabulary = "https://go.drugbank.com/releases/5-1-13/downloads/all-drugbank-vocabulary",
-  structures = "https://go.drugbank.com/releases/5-1-13/downloads/all-structure-links",
-  targets    = "https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links"
+  vocabulary = 
+    "https://go.drugbank.com/releases/5-1-13/downloads/all-drugbank-vocabulary",
+  structures = 
+    "https://go.drugbank.com/releases/5-1-13/downloads/all-structure-links",
+  targets    = 
+    "https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links"
 )
 
 zip_paths <- file.path(drugbank_path, paste0("drugbank_", names(urls), ".zip"))
@@ -173,4 +176,12 @@ targets <- read_csv(paste0(drugbank_path,"uniprot links.csv"))
 write_tsv(vocabulary, paste0(data_path,"drugbank_vocabulary.tsv"))
 write_tsv(structures, paste0(data_path,"drugbank_structures.tsv"))
 write_tsv(targets, paste0(data_path,"drugbank_targets.tsv"))
+```
+
+### Check if results folder exists otherwise create it
+
+```{r}
+if (!dir.exists("../results")) {
+  dir.create("../results")
+}
 ```
