@@ -24,3 +24,8 @@ nuclear_receptor_drugs <- df |>
   filter(!is.na(freq_lower))
 
 ```
+
+```{r}
+# Now we order it on Upper frequencies, descendingly
+nuclear_receptor_drugs <- nuclear_receptor_drugs |>  arrange(desc(freq_upper))
+```
