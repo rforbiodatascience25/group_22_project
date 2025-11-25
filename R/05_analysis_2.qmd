@@ -1,8 +1,8 @@
 ## Now lets look at a more nuanced analysis
 
-Specifically, lets look at drugs that target nuclear receptors, and lets look at their side-effects.
+Specifically, lets look at drugs that hormonal targets, and lets look at their side-effects.
 
-### First we find drugs that target nuclear receptors
+### First we find drugs that have hormonal targets
 
 ```{r}
 library(dplyr)
@@ -10,22 +10,98 @@ library(stringr)
 ```
 
 ```{r}
-# We create a vector of known nuclear receptor uniprot names
-nuclear_receptor_uniprot <- c(
-"Androgen receptor", "Estrogen receptor alpha", "Estrogen receptor beta", "Progesterone receptor", "Glucocorticoid receptor", "Thyroid hormone receptor alpha", "Thyroid hormone receptor beta", "Retinoic acid receptor alpha", "Retinoic acid receptor beta", "Retinoic acid receptor gamma", "Retinoid X receptor alpha", "Retinoid X receptor beta", "Retinoid X receptor gamma", "Vitamin D receptor", "Peroxisome proliferator-activated receptor gamma", "Peroxisome proliferator-activated receptor alpha", "Peroxisome proliferator-activated receptor delta", "Pregnane X receptor", "Constitutive androstane receptor", "REV-ERB alpha", "REV-ERB beta", "LXR alpha", "LXR beta", "FXR", "ROR alpha", "ROR beta", "ROR gamma", "TR2", "TR4", "TLX", "PNR", "COUP-TF alpha", "COUP-TF beta", "EAR-2", "Mineralocorticoid receptor", "MR", "Nurr1", "Nurr2", "NOR-1", "SF-1", "LRH-1", "GCNF", "DAX-1", "SHP"
-)
+hormone_targets <- c("estrogen","androgen","progesterone","glucocorticoid","thyroid","mineralocorticoid")
 
-# Then we turn it into a pattern
-nuclear_receptor_uniprot <- paste(nuclear_receptor_uniprot, collapse = "|")
+endo_terms <- c("Gyne", "Hormon", "Menstru", "Sex", "Endocr")
 
-# And finally we filter them and remove redundant rows
-nuclear_receptor_drugs <- df |>
-  filter(str_detect(UniProt_Names, nuclear_receptor_uniprot)) |>
-  filter(!is.na(freq_lower))
+hormonal_drugs_targets <- df |>
+  mutate(
+    hormone_target = str_detect(tolower(UniProt_Names), paste(hormone_targets, collapse="|")),
+    endocrine_se = str_detect(side_effect_PT, paste(endo_terms, collapse="|"))
+  ) |>
+  group_by(hormone_target) %>%
+  summarise(prop_endocrine = mean(endocrine_se)) %>%
+  ggplot(aes(x = hormone_target, y = prop_endocrine)) +
+  geom_col(aes(fill=hormone_target)) +
+  labs(
+    title = "Hormone Targets → Endocrine Side Effects",
+    x = "Is hormone receptor target?",
+    y = "Proportion endocrine side effects"
+  ) +
+  theme_minimal()
+
+```
+```{r}
+df %>%
+  mutate(alpha = str_detect(UniProt_Names, "alpha|α"),
+         neuro = str_detect(side_effect_PT, "Headache|Dizz|Migraine"),
+         resp  = str_detect(side_effect_PT, "Cough|Rhini|Sinus|Pharyng")) %>%
+  group_by(alpha) %>%
+  summarise(
+    neuro_prop = mean(neuro),
+    resp_prop  = mean(resp)
+  ) %>%
+  pivot_longer(cols = c(neuro_prop, resp_prop), names_to="type", values_to="prop") %>%
+  ggplot(aes(x = type, y = prop, fill = alpha)) +
+  geom_col(position="dodge") +
+  labs(
+    title = "α vs β Isoforms Produce DIFFERENT Side-Effect Profiles",
+    x = "Side-Effect Category",
+    y = "Proportion"
+  ) +
+  theme_minimal()
 
 ```
 
 ```{r}
-# Now we order it on Upper frequencies, descendingly
-nuclear_receptor_drugs <- nuclear_receptor_drugs |>  arrange(desc(freq_upper))
+df %>%
+  mutate(n_targets = str_count(UniProt_Names, ";") + 1) %>%
+  group_by(`Common name`, n_targets) %>%
+  summarise(n_sideeffects = n_distinct(side_effect_PT)) %>%
+  ggplot(aes(x = n_targets, y = n_sideeffects)) +
+  geom_jitter(width=0.1, alpha=0.6) +
+  geom_smooth(method="lm", se=FALSE, color="purple") +
+  labs(
+    title = "Multi-Target Drugs → More Unique Side Effects",
+    x = "Number of Targets",
+    y = "Number of Side Effects"
+  ) +
+  theme_minimal()
+
+
 ```
+```{r}
+category_terms <- list(
+  Respiratory = c("Rhinit","Cough","Sinus","Nasal","Pharyng"),
+  Neurological = c("Headache","Migrai","Dizz","Sleep"),
+  GI = c("Vom","Nau","Diarr","Constip"),
+  Immune = c("Infect","Hypersen","Allerg"),
+  Pain = c("Pain")
+)
+
+df_cat <- df
+
+for(cat in names(category_terms)) {
+  terms <- category_terms[[cat]]
+  df_cat[[cat]] <- str_detect(df_cat$side_effect_PT, paste(terms, collapse="|"))
+}
+
+df_long <- df_cat %>%
+  select(UniProt_Names, all_of(names(category_terms))) %>%
+  pivot_longer(-UniProt_Names, names_to="Category", values_to="Flag") %>%
+  group_by(UniProt_Names, Category) %>%
+  summarise(prop = mean(Flag)) 
+
+ggplot(df_long, aes(x=UniProt_Names, y=prop, fill=Category)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title="Each Target Has a Unique Side-Effect Profile",
+    x="Target",
+    y="Proportion",
+    fill="Side-Effect Category"
+  ) +
+  theme_minimal()
+
+```
+
