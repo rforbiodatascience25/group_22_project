@@ -174,3 +174,11 @@ write_tsv(vocabulary, paste0(data_path,"drugbank_vocabulary.tsv"))
 write_tsv(structures, paste0(data_path,"drugbank_structures.tsv"))
 write_tsv(targets, paste0(data_path,"drugbank_targets.tsv"))
 ```
+
+### Check if results folder exists otherwise create it
+
+```{r}
+if (!dir.exists("../results")) {
+  dir.create("../results")
+}
+```
