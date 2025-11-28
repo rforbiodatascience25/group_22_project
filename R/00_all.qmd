@@ -7,13 +7,31 @@ format: html
 #| warning: false
 #| error: false
 #| message: true
+#| output_dir: "../R/"
 library(quarto)
 source("99_proj_func.R")
-quarto_render("01_load.qmd")
-quarto_render("02_clean.qmd")
-quarto_render("03_augment.qmd")
-quarto_render("04_describe.qmd")
-quarto_render("05_analysis_1.qmd")
-quarto_render("05_analysis_2.qmd")
-quarto_render("06_analysis_2.qmd")
+results_path <-  "../results/"
+r_path <-  "../R/"
+
+quarto_render(input = file.path(r_path, "01_load.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "02_clean.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "03_augment.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "04_describe.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "05_analysis_1.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "05_analysis_2.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "06_analysis_2.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
 ```
