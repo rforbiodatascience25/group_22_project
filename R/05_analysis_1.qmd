@@ -23,19 +23,23 @@ Load merged data from Drugbank and SIDER.
 results_path = "../results/"
 df <- read_tsv("../data/merged_data.tsv")
 
-side_effect_rates <- df |>
-  mutate(percentages = str_extract_all(freq_text, "\\d+\\.?\\d*(?=%)")) |>
-  unnest_longer(percentages) |>
-  mutate(percentages = as.numeric(percentages)) |>
-  group_by(side_effect_PT) |>
+# calculate the side effect rates used for correlation plot. we need to extract the list of frequencies and calculate the average over that
+side_effect_rates <- df |> 
+  mutate(percent = str_split(freq_text, ";")) |>
+  unnest(percent) |> 
+  mutate(
+    percent = trimws(percent),                  
+    percent = readr::parse_number(percent)        
+  ) |> 
+  drop_na(percent) |> 
+  group_by(side_effect_PT) |> 
   summarise(
-    avg_rate = mean(percentages, na.rm = TRUE),
-    median_rate = median(percentages, na.rm = TRUE),
-    n_reports = n_distinct(`drugbank_id`),  # or however you define a "report"
-    n_percentage_mentions = sum(!is.na(percentages)),
+    avg_rate              = mean(percent),
+    median_rate           = median(percent),
+    n_reports             = n_distinct(drugbank_id),
+    n_percentage_mentions = n(),
     .groups = "drop"
-  ) |>
-  filter(n_percentage_mentions > 0)
+  )
 ```
 
 Let's just check what we're dealing with here
@@ -47,23 +51,19 @@ side_effect_rates |> arrange(desc(n_reports))
 Nausea, headache, vomiting, dizziness are all among the top reported side effects which seems to make sense.
 
 ```{r}
-# Filter once so both correlation and plot use the exact same data
-df_se <- side_effect_rates
-
 # Compute and print the correlation
-correlation <- cor(df_se$n_reports, df_se$avg_rate, use = "complete.obs")
+correlation <- cor(side_effect_rates$n_reports, side_effect_rates$avg_rate, use = "complete.obs")
 print(paste("Correlation between number of reports and average frequency rate:", round(correlation, 3)))
 
 # Plot
-plot_correlation <- df_se |>
+plot_correlation <- side_effect_rates |>
   ggplot(aes(x = n_reports, y = avg_rate)) +
-  #ggplot(aes(x = n_percentage_mentions, y = avg_rate)) +
   geom_point(alpha = 0.5, color = "darkcyan") +
-  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  geom_smooth(method = "lm", color = "red") +
   labs(
     title = "Correlation: Number of Reports vs. Frequency Rate",
     subtitle = paste("Correlation coefficient:", round(correlation, 3)),
-    x = "Number of Reports (Drug-Side Effect Pairs)",
+    x = "Number of Reports (Drug + Side Effect Pairs)",
     y = "Average Frequency Rate (%)"
   ) +
   theme_minimal()
@@ -74,22 +74,28 @@ print(plot_correlation)
 
 Here we checked the average reported frequency of a side effect dependent on how many times it was reported. There may seem to be a small trend that very common side effects are more often reported than more niche side effects, and the variance in low number of reports is quite high. Common side effects might be easier to report since more data points will occur and it's more variable with few reports on rare data points.
 
+For this next analysis we try to see if there is a correlation between illness treatment and experienced side effects
+
 ```{r}
-# Can we show correlation between illness treatment and side effect
-# We filter for the top 20 items to keep the plot readable
+# We only filter for the top 20 indications and top 20 side effects to make this viewable
+# top 20 indications (treatment target)
 top_indications <- df |>
-  separate_rows(indication_PT, sep = ";\\s*") |>
+  separate_rows(indication_PT, sep = ";") |>
+  mutate(indication_PT = trimws(indication_PT)) |>
   count(indication_PT, sort = TRUE) |>
-  head(20) |>
+  slice_head(n = 20) |>
   pull(indication_PT)
 
+# top 20 side effects
 top_side_effects <- df |>
   count(side_effect_PT, sort = TRUE) |>
-  head(20) |>
+  slice_head(n = 20) |>
   pull(side_effect_PT)
 
+# co-occurrence matrix data
 plot_matrix <- df |>
-  separate_rows(indication_PT, sep = ";\\s*") |>
+  separate_rows(indication_PT, sep = ";") |>
+  mutate(indication_PT = trimws(indication_PT)) |>
   filter(
     indication_PT %in% top_indications,
     side_effect_PT %in% top_side_effects
@@ -114,32 +120,32 @@ print(plot_matrix)
 This co-occurrence matrix is meant to show if specific common side effects are tied to specific treatment indications. The data is hard to analyze as we can see that Nausea and Vomiting is tied to Infection which also seems to be a common effect of Infections in general. This illustration seems to just show the most common reports. To combat this we can use the frequencies instead, which is in the next plot.
 
 ```{r}
-plot_matrix_normalized_data <- df |>
-  # extract % values
-  mutate(percentages = str_extract_all(freq_text, "\\d+\\.?\\d*(?=%)")) |>
-  # unnest so each percentage gets its own row 
-  unnest_longer(percentages) |>
-  mutate(percentages = as.numeric(percentages)) |>
-  # remove NAs
-  filter(!is.na(percentages)) |>
-  # separate multiple indications
-  separate_rows(indication_PT, sep = ";\\s*") |>
-  # Filter to only top indications and side effects
+plot_matrix_normalized_data <- df |> 
+  mutate(percent = str_split(freq_text, ";")) |> 
+  unnest(percent) |> 
+  mutate(
+    percent = trimws(percent),
+    percent = readr::parse_number(percent)
+  ) |> 
+  drop_na(percent) |> 
+  
+  # indications are also in a separated list
+  separate_rows(indication_PT, sep = ";") |> 
+  mutate(indication_PT = trimws(indication_PT)) |> 
+  
+  # take the top 20 indications and side effects from the list
   filter(
     indication_PT %in% top_indications,
     side_effect_PT %in% top_side_effects
-  ) |>
-  
-  # group by indication–side effect pair
-  group_by(indication_PT, side_effect_PT) |>
-  
-  # get the stats
+  ) |> 
+  group_by(indication_PT, side_effect_PT) |> 
   summarise(
-    avg_rate = mean(percentages, na.rm = TRUE),
+    avg_rate = mean(percent),
     n_percentage_mentions = n(),
     n_drugs_contributing = n_distinct(drugbank_id),
     .groups = "drop"
   )
+
 ```
 
 ```{r}
@@ -168,28 +174,27 @@ plot_matrix_normalized
 This frequency matrix shows instead where a large % of side effects are experienced. In drugs that are used to treat breast cancer we often see Diarrhoea, Nausea, Feeling abnormal and Vomiting which may be expected which such a serious illness. Neoplasm is tumor growth and we see frequent Nausea and Gastrointenstinal pain, which again makes sense. We can also see that Hypertension rarely leads to any of these side effects when treated. Some of the serious diseases seem to be more yellow on the chart which might make sense as a more side effects may be allowed.
 
 ```{r}
-# Get top targets and side effects
+# In this snippet, we research if we can see the receptor that the drug targets is closely linked with specific side effects. again we just take top 20
 top_targets <- df |>
-  mutate(uniprot_first = str_extract(uniprot_names, "^[^;]+")) |> 
-  count(uniprot_first, sort = TRUE) |>
-  head(20) |>
-  pull(uniprot_first)
+  #some of them have multiple receptors but some only have 1, we split anyway
+  separate_rows(uniprot_names, sep = ";") |>  
+  mutate(uniprot_names = trimws(uniprot_names)) |> 
+  filter(uniprot_names != "") |>                  
+  count(uniprot_names, sort = TRUE) |>   
+  slice_head(n = 20) |> 
+  pull(uniprot_names)
 
-top_side_effects <- df |>
-  count(side_effect_PT, sort = TRUE) |>
-  head(20) |>
-  pull(side_effect_PT)
 
-# Plot heatmap
 plot_targets_se <- df |>
-  mutate(uniprot_first = str_extract(uniprot_names, "^[^;]+")) |>
+  separate_rows(uniprot_names, sep = ";") |>    
+  mutate(uniprot_names = trimws(uniprot_names)) |> 
   filter(
-    uniprot_first %in% top_targets,
+    uniprot_names %in% top_targets,
     side_effect_PT %in% top_side_effects
   ) |>
-  count(uniprot_first, side_effect_PT) |>
-  mutate(uniprot_first = str_trunc(uniprot_first, 30)) |>
-  ggplot(aes(x = side_effect_PT, y = uniprot_first, fill = n)) +
+  count(uniprot_names, side_effect_PT) |> 
+  mutate(uniprot_names = str_trunc(uniprot_names, 30)) |> 
+  ggplot(aes(x = side_effect_PT, y = uniprot_names, fill = n)) +
   geom_tile() +
   scale_fill_viridis_c(name = "Co-occurrences") +
   labs(
@@ -200,32 +205,37 @@ plot_targets_se <- df |>
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(paste0(results_path,"Analysis1_co_occ_targets.png"), plot = last_plot(), 
-       width = 8, height = 6, dpi = 300)
+
+# 3) Save plot
+ggsave(
+  paste0(results_path, "Analysis1_co_occ_targets.png"),
+  plot = plot_targets_se,
+  width = 8, height = 6, dpi = 300
+)
+
 print(plot_targets_se)
+
 ```
 
-Here we can see some co-occurrences between what biological target/receptor is treated and what type of side effect is experienced, but this requires a further deep dive.
+Here we can see some co-occurrences between what biological target/receptor is treated and what type of side effect is experienced.
 
 ```{r}
 # plot biological targets vs side effects
-# Calculate per-drug metrics
 drug_targets_se <- df |>
+  separate_rows(uniprot_names, sep = ";\\s*") |>
+  mutate(uniprot_names = trimws(uniprot_names)) |>
+  filter(uniprot_names != "") |>
   group_by(drugbank_id, common_name) |>
   summarise(
-    # Count unique targets
-    n_targets = n_distinct(unlist(str_split(uniprot_names, ";\\s*"))),
-    # Count unique side effects
+    n_targets      = n_distinct(uniprot_names),
     n_side_effects = n_distinct(side_effect_PT),
     .groups = "drop"
-  ) |>
-  filter(!is.na(n_targets), n_targets > 0)
+  )
 
-# Compute correlation
 cor_targets <- cor(drug_targets_se$n_targets, drug_targets_se$n_side_effects, 
                    use = "complete.obs")
 
-# 
+ 
 plot_targets_vs_se <- drug_targets_se |>
   ggplot(aes(x = n_targets, y = n_side_effects)) +
   geom_point(alpha = 0.4, color = "steelblue") +
@@ -248,17 +258,16 @@ We see no explicit relation between the amount of protein targets a given drug h
 ```{r}
 # plot indications vs side effects
 drug_indications_se <- df |>
+  mutate(ind = str_split(indication_PT, ";"), 
+         se  = str_split(side_effect_PT, ";")) |>
+  unnest(ind, se) |>
   group_by(drugbank_id, common_name) |>
   summarise(
-    # Count unique indications
-    n_indications = n_distinct(unlist(str_split(indication_PT, ";\\s*"))),
-    # Count unique side effects
-    n_side_effects = n_distinct(side_effect_PT),
+    n_indications  = n_distinct(trimws(ind)),
+    n_side_effects = n_distinct(trimws(se)),
     .groups = "drop"
-  ) |>
-  filter(!is.na(n_indications), n_indications > 0)
+  )
 
-# Compute correlation
 cor_indications <- cor(drug_indications_se$n_indications, drug_indications_se$n_side_effects,
                        use = "complete.obs")
 
