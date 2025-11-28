@@ -4,6 +4,7 @@ format: html
 ---
 
 ```{r}
+<<<<<<< HEAD
 #| message: false
 #| warning: false
 library(knitr)
@@ -15,4 +16,20 @@ knit(input = "03_augment.qmd", output = tempfile(fileext = ".md"))
 knit(input = "04_describe.qmd", output = tempfile(fileext = ".md"))
 knit(input = "05_analysis_1.qmd", output = tempfile(fileext = ".md"))
 knit(input = "05_analysis_2.qmd", output = tempfile(fileext = ".md"))
+=======
+#| warning: false
+#| error: false
+#| message: true
+library(quarto)
+
+quarto_render("01_load.qmd")
+quarto_render("02_clean.qmd")
+quarto_render("03_augment.qmd")
+quarto_render("04_describe.qmd")
+quarto_render("05_analysis_1.qmd")
+quarto_render("05_analysis_2.qmd")
+quarto_render("06_analysis_2.qmd")
+
+source("99_proj_func.R")
+>>>>>>> ff2c033698e0b0bfdaaa20b9b6a94db95911a2a5
 ```
