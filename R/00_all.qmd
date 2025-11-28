@@ -4,25 +4,15 @@ format: html
 ---
 
 ```{r}
+#| message: false
+#| warning: false
 library(knitr)
 
-pipeline <- c(
-  "01_load.qmd",
-  "02_clean.qmd",
-  "03_augment.qmd",
-  "04_describe.qmd",
-  "05_analysis_1.qmd",
-  "05_analysis_2.qmd",
-  "06_analysis_2.qmd",
-  "99_proj_func.R"
-)
-
-for (f in pipeline) {
-  message("Running: ", f)
-  suppressWarnings(
-    suppressMessages(
-      knit(input = f, output = tempfile(fileext = ".md"))
-    )
-  )
-}
+# Runtime: 20-30 minutes
+knit(input = "01_load.qmd", output = tempfile(fileext = ".md"))
+knit(input = "02_clean.qmd", output = tempfile(fileext = ".md"))
+knit(input = "03_augment.qmd", output = tempfile(fileext = ".md"))
+knit(input = "04_describe.qmd", output = tempfile(fileext = ".md"))
+knit(input = "05_analysis_1.qmd", output = tempfile(fileext = ".md"))
+knit(input = "05_analysis_2.qmd", output = tempfile(fileext = ".md"))
 ```
