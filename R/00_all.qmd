@@ -4,25 +4,44 @@ format: html
 ---
 
 ```{r}
+#| warning: false
+#| error: false
+#| message: true
+#| output_dir: "../R/"
+library(quarto)
 library(knitr)
+source("99_proj_func.R")
+results_path <-  "../results/"
+r_path <-  "../R/"
 
-pipeline <- c(
-  "01_load.qmd",
-  "02_clean.qmd",
-  "03_augment.qmd",
-  "04_describe.qmd",
-  "05_analysis_1.qmd",
-  "05_analysis_2.qmd",
-  "06_analysis_2.qmd",
-  "99_proj_func.R"
-)
+#Long runtime, 20-30 minutes
+knit(paste0(r_path,"01_load.qmd"))
+knit(paste0(r_path,"02_clean.qmd"))
+knit(paste0(r_path,"03_augment.qmd"))
+knit(paste0(r_path,"04_describe.qmd"))
+knit(paste0(r_path,"05_analysis_1.qmd"))
+knit(paste0(r_path,"05_analysis_2.qmd"))
+knit(paste0(r_path,"06_analysis_2.qmd"))
 
-for (f in pipeline) {
-  message("Running: ", f)
-  suppressWarnings(
-    suppressMessages(
-      knit(input = f, output = tempfile(fileext = ".md"))
-    )
-  )
-}
+quarto_render(input = file.path(r_path, "01_load.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "02_clean.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "03_augment.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "04_describe.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "05_analysis_1.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "05_analysis_2.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
+quarto_render(input = file.path(r_path, "06_analysis_2.qmd"),
+  quarto_args = c("--output-dir", results_path))
+
 ```

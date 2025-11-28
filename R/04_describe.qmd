@@ -11,6 +11,7 @@ In this document we go over the SIDER and Drugbank datasets to get an overview o
 library(tidyverse)
 #| message: false
 #| warning: false
+results_path <- "../results/"
 df <- read_tsv("../data/merged_data.tsv") |>
   mutate(
     uniprot_names = str_split(uniprot_names, ";")
