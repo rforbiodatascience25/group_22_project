@@ -4,7 +4,8 @@ format: html
 ---
 
 ```{r}
-library(knitr)
+library(purrr)
+library(quarto)  # comes with Quarto
 
 pipeline <- c(
   "01_load.qmd",
@@ -17,12 +18,11 @@ pipeline <- c(
   "99_proj_func.R"
 )
 
-for (f in pipeline) {
-  message("Running: ", f)
-  suppressWarnings(
-    suppressMessages(
-      knit(input = f, output = tempfile(fileext = ".md"))
-    )
-  )
-}
+# Render all .qmd files to HTML
+q_docs <- pipeline[grepl("\\.qmd$", pipeline)]
+
+walk(q_docs, ~{
+  message("Rendering: ", .x)
+  quarto_render(.x)   # produces .html next to the .qmd
+})
 ```
