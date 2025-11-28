@@ -222,9 +222,10 @@ Here we can see some co-occurrences between what biological target/receptor is t
 ```{r}
 # plot biological targets vs side effects
 drug_targets_se <- df |>
-  separate_rows(uniprot_names, sep = ";\\s*") |>
-  mutate(uniprot_names = trimws(uniprot_names)) |>
-  filter(uniprot_names != "") |>
+  mutate(uniprot_names = str_split(uniprot_names, ";")) |> 
+  unnest(uniprot_names) |> 
+  mutate(uniprot_names = trimws(uniprot_names)) |> 
+  filter(uniprot_names != "") |> 
   group_by(drugbank_id, common_name) |>
   summarise(
     n_targets      = n_distinct(uniprot_names),
