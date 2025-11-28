@@ -9,9 +9,19 @@ format: html
 #| message: true
 #| output_dir: "../R/"
 library(quarto)
+library(knitr)
 source("99_proj_func.R")
 results_path <-  "../results/"
 r_path <-  "../R/"
+
+#Long runtime, 20-30 minutes
+knit(paste0(r_path,"01_load.qmd"))
+knit(paste0(r_path,"02_clean.qmd"))
+knit(paste0(r_path,"03_augment.qmd"))
+knit(paste0(r_path,"04_describe.qmd"))
+knit(paste0(r_path,"05_analysis_1.qmd"))
+knit(paste0(r_path,"05_analysis_2.qmd"))
+knit(paste0(r_path,"06_analysis_2.qmd"))
 
 quarto_render(input = file.path(r_path, "01_load.qmd"),
   quarto_args = c("--output-dir", results_path))
