@@ -1,5 +1,5 @@
 ---
-title: "05_analysis_1"
+title: "05_analysis"
 format: 
   html:
     embed-resources: true
@@ -10,6 +10,8 @@ editor: visual
 #| message: false
 #| warning: false
 library(tidyverse)
+library(dplyr)
+library(stringr)
 source("99_proj_func.R")
 ```
 
@@ -206,7 +208,6 @@ plot_targets_se <- df |>
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
-# 3) Save plot
 ggsave(
   paste0(results_path, "Analysis1_co_occ_targets.png"),
   plot = plot_targets_se,
@@ -291,3 +292,177 @@ print(plot_indications_vs_se)
 ```
 
 We do see some amount of correlated behavior between how many indications a drug targets or treats and how many side effects are listed. This is surprising compared to the former plot, but might be explained by the fact that more indications on a drug potentially means that it might have been studied more and therefore more side effects appeared.
+
+# Now lets look at a more nuanced analysis
+
+Specifically, lets look at drugs that hormonal targets, and lets look at their side-effects. With hormonal targets we mean receptors that respond to the body's hormones. When drugs affect these types of receptors, it can change how the body reacts to the hormones themselves. Thus, we should also see more endocrine side effects.
+
+### First we find drugs that have hormonal targets
+
+```{r}
+# We define keywords for known hormonal targets.
+hormone_targets <- c("estrogen","androgen","progesterone","glucocorticoid",
+                     "thyroid","mineralocorticoid")
+
+# We turn this into a pattern
+hormone_pattern <- paste(hormone_targets, collapse="|")
+
+# And add a column for whether the drug targets hormonal receptors
+hormonal_drugs <- df |> mutate(
+  hormone_target = str_detect(tolower(uniprot_names), hormone_pattern)
+  )
+
+# Then we check how many TRUEs did we get, if any at all?
+table(hormonal_drugs$hormone_target, useNA = "ifany")
+
+```
+
+### Next we mark the drugs that have endocrine side-effects
+
+```{r}
+# Now we define keywords for known endocrine side-effects
+endo_terms <- c("Gyne", "Hormon", "Menstru", "Sex", "Endocr")
+
+# We turn this into a pattern
+endo_pattern <- paste(endo_terms, collapse = "|")
+
+# And add a column for whether the drug has endocrine side effects
+hormonal_drugs_endo_targets <- hormonal_drugs |> mutate(
+  endocrine_se = str_detect(side_effect_PT, paste(endo_terms, collapse="|"))
+  )
+
+# Then we check how many TRUEs did we get, if any at all?
+table(hormonal_drugs_endo_targets$endocrine_se, useNA = "ifany")
+```
+
+### Finally we plot our correlation
+
+```{r}
+# Finally we make a plot
+hormonal_drugs_endo_targets |>
+  group_by(hormone_target) |>
+  summarise(prop_endocrine = mean(endocrine_se)) |>
+  mutate(
+    hormone_target = ifelse(
+      hormone_target, "Hormonal target", "Non-hormonal target"
+      )
+  ) |>
+  ggplot(aes(x = hormone_target, y = prop_endocrine, fill = hormone_target)) +
+  geom_col(width = 0.6, color = "black", alpha = 0.85) +
+  scale_fill_manual(values = c("Hormonal target" = "#4A90E2", 
+                               "Non-hormonal target" = "#FF7F50")) +
+  labs(
+    title = "Proportion of Endocrine Side Effects",
+    subtitle = "Comparison between hormonal and non-hormonal drug targets",
+    x = "Drug target category",
+    y = "Proportion of endocrine side effects"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.text.x = element_text(face = "bold")
+  )
+
+ggsave("../results/Analysis1.2_Endocrine.png", plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+
+```
+
+```{r}
+# Calculate and print the exact bar heights
+bar_heights <- hormonal_drugs_endo_targets |>
+  group_by(hormone_target) |>
+  summarise(prop_endocrine = mean(endocrine_se))
+
+print(bar_heights)
+```
+
+As shown, drugs that target hormonal receptors exhibit a higher proportion of endocrine-related side effects. Specifically, the proportion increases from 0.00256 to 0.00697, representing nearly a threefold increase.
+
+## Now lets look at Stress-Axis targets
+
+Specifically, we are going to examine drugs that act on stress-axis receptors, such as glucocorticoid and mineralocorticoid receptors. These targets normally respond to the body’s cortisol-based stress hormones and play a central role in regulating metabolism, appetite, and glucose levels. When drugs interact with these receptors, they can alter the body’s metabolic homeostasis. Therefore, we expect to observe an increased proportion of metabolic side effects among drugs targeting the stress axis.
+
+### First we find drugs that indicate metabolic side-effects.
+
+```{r}
+# We define the key terms
+met_terms <- c("Weight","Appetite","Metab","Glucose")
+
+# Convert it into a pattern
+met_pattern <- paste(met_terms, collapse = "|")
+
+# And then add a collumn indicating metabolic side-effects
+metabolic_se <- df |> mutate(metab = str_detect(side_effect_PT, met_pattern))
+
+# Then we check how many TRUEs did we get, if any at all?
+table(metabolic_se$metab, useNA = "ifany")
+
+```
+
+### Next we find drugs that target Stress-axis receptors
+
+In this case, we restrict ourselves to three types of stress-axis receptors. These are glucocorticoid, mineralocorticoid and corticoid.
+
+```{r}
+# Define the keys as a pattern directly
+sa_receptor_pattern <- "glucocorticoid|mineralocorticoid|corticoid"
+
+# Add a collumn for the targets
+sa_receptor_metabolic_se <- metabolic_se |> mutate(
+  sa_target = str_detect(tolower(uniprot_names), sa_receptor_pattern)
+  )
+
+# Then we check how many TRUEs did we get, if any at all?
+table(sa_receptor_metabolic_se$sa_target, useNA = "ifany")
+```
+
+### Finally we create the plot
+
+```{r}
+# Create the plot
+sa_receptor_metabolic_se |>
+  group_by(sa_target) |>
+  summarise(prop_metab = mean(metab)) |>
+  mutate(
+    sa_target = ifelse(
+      sa_target, "Stress-axis target", "Non-stress-axis target"
+      )
+  ) |>
+  ggplot(aes(x = sa_target, y = prop_metab, fill = sa_target)) +
+  geom_col(width = 0.6, color = "black", alpha = 0.85) +
+  scale_fill_manual(values = c(
+    "Stress-axis target" = "#4A90E2",
+    "Non-stress-axis target" = "#FF7F50"
+  )) +
+  labs(
+    title = "Proportion of Metabolic Side Effects",
+    subtitle = "Comparison between stress-axis and non–stress-axis targets",
+    x = "Drug target category",
+    y = "Proportion of metabolic side effects"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.text.x = element_text(face = "bold")
+  )
+
+ggsave("../results/Analysis1.2_Metabolic.png", plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+
+```
+
+```{r}
+# Calculate and print the exact bar heights
+bar_heights <- sa_receptor_metabolic_se |>
+  group_by(sa_target) |>
+  summarise(prop_metab = mean(metab, na.rm = TRUE))
+
+print(bar_heights)
+```
+
+Similarly, drugs that act on stress-axis receptors show a higher proportion of metabolic side effects. In our data, the proportion increases from 0.00542 for non–stress-axis targets to 0.00999 for stress-axis targets, indicating nearly a twofold elevation. This supports the expectation that modulation of glucocorticoid-related pathways can lead to measurable metabolic disturbances.

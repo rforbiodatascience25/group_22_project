@@ -1,6 +1,9 @@
 ---
-title: "04_describe"
-format: html
+title: "05_describe"
+format: 
+  html:
+    embed-resources: true
+editor: visual
 ---
 
 # Data description

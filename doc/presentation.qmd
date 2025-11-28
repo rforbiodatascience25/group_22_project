@@ -1,43 +1,24 @@
 ---
-title: "Quarto Presentations"
-subtitle: "Create beautiful interactive slide decks with Reveal.js"
-format:
-  revealjs: 
-    slide-number: true
-    chalkboard: 
-      buttons: false
-    preview-links: auto
-    logo: images/quarto.png
-    css: styles.css
-    footer: '[https://{{< meta prerelease-subdomain >}}quarto.org](https://{{< meta prerelease-subdomain >}}quarto.org)'
-resources:
-  - demo.pdf
+title: "presentation"
+format: revealjs
+editor: visual
 ---
 
-## Hello, There
+## Quarto
 
-This presentation will show you examples of what you can do with Quarto and [Reveal.js](https://revealjs.com), including:
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
 
--   Presenting code and LaTeX equations
--   Including computations in slide output
--   Image, video, and iframe backgrounds
--   Fancy transitions and animations
--   Activating scroll view
+## Bullets
 
-...and much more
+When you click the **Render** button a document will be generated that includes:
 
-## Pretty Code {auto-animate="true"}
+-   Content authored with markdown
+-   Output from executable code
 
--   Over 20 syntax highlighting themes available
--   Default theme optimized for accessibility
+## Code
 
-``` r
-# Define a server for the Shiny app
-function(input, output) {
-  
-  # Fill in the spot we created for a plot
-  output$phonePlot <- renderPlot({
-    # Render a barplot
-  })
-}
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
 ```
