@@ -4,25 +4,18 @@ format: html
 ---
 
 ```{r}
-library(purrr)
-library(quarto)  # comes with Quarto
+#| warning: false
+#| error: false
+#| message: true
+library(quarto)
 
-pipeline <- c(
-  "01_load.qmd",
-  "02_clean.qmd",
-  "03_augment.qmd",
-  "04_describe.qmd",
-  "05_analysis_1.qmd",
-  "05_analysis_2.qmd",
-  "06_analysis_2.qmd",
-  "99_proj_func.R"
-)
+quarto_render("01_load.qmd")
+quarto_render("02_clean.qmd")
+quarto_render("03_augment.qmd")
+quarto_render("04_describe.qmd")
+quarto_render("05_analysis_1.qmd")
+quarto_render("05_analysis_2.qmd")
+quarto_render("06_analysis_2.qmd")
 
-# Render all .qmd files to HTML
-q_docs <- pipeline[grepl("\\.qmd$", pipeline)]
-
-walk(q_docs, ~{
-  message("Rendering: ", .x)
-  quarto_render(.x)   # produces .html next to the .qmd
-})
+source("99_proj_func.R")
 ```
