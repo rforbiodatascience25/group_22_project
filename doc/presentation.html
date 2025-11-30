@@ -191,20 +191,75 @@ Group 22
 <section id="section" class="slide level2">
 <h2></h2>
 <h3 id="features">Features</h3>
+<div style="font-size: 0.8em;">
 <ul>
 <li>UniProt names - Biological targets</li>
 <li>Side effects - most frequent side effects</li>
 <li>SMILES - chemical structure</li>
 <li>Lipinski Rule - rule of thumb for successfull medicines</li>
 <li>State - commercial, veterinary, experimental</li>
+<li>Indications - target illness or symptom of drug</li>
 </ul>
-</section>
-<section id="results" class="slide level2">
-<h2>Results</h2>
-<h3 id="analysis-1">Analysis 1</h3>
-<p>Describe results here</p>
-</section>
+</div>
+
+<img data-src="presentation_files/figures/Description_violin_plot.png" style="width:50.0%" class="r-stretch"></section>
 <section id="section-1" class="slide level2">
+<h2></h2>
+<h3 id="analysis-1---correlations">Analysis 1 - Correlations</h3>
+<div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="presentation_files/figures/Analysis1_reports_vs_freq.png"></p>
+<figcaption>Reports vs.&nbsp;Frequency</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="presentation_files/figures/Analysis1_targets_se_correl.png"></p>
+<figcaption>Targets vs.&nbsp;SE</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="presentation_files/figures/Analysis1_indications_se_correl.png"></p>
+<figcaption>Indications vs.&nbsp;SE</figcaption>
+</figure>
+</div>
+</div><p>1: Some common side effects may be generally more frequent</p>
+<p>2: Amount of biological targets of a drug show no clear relationship with number of side effects</p>
+<p>3: Indications (illness/symptom targeted) show some correlation with number of side effects</p>
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<h3 id="analysis-1---co-occurrence-patterns">Analysis 1 - Co-occurrence Patterns</h3>
+<div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="presentation_files/figures/Analysis1_co_occ_indic.png"></p>
+<figcaption>Indications vs.&nbsp;SE (counts)</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="presentation_files/figures/Analysis1_co_occ_indic_freq.png"></p>
+<figcaption>Indications vs.&nbsp;SE (frequency)</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="presentation_files/figures/Analysis1_co_occ_targets.png"></p>
+<figcaption>Protein Targets vs.&nbsp;SE</figcaption>
+</figure>
+</div>
+</div><p>1: Infection and kidney disease seem to have most overlap with side effects</p>
+<p>2: Breast cancer has low co-occ but higher frequencies</p>
+<p>3: We can see what receptors often light up and give the common side effects</p>
+</section>
+<section id="section-3" class="slide level2">
 <h2></h2>
 <h3 id="analysis-2">Analysis 2</h3>
 <p>In this analysis, the correlation between the Lipinksi Rule of 5 and the number of side effects was investigated.</p>
@@ -224,7 +279,7 @@ Group 22
 </figure>
 </div>
 </div></section>
-<section id="section-2" class="slide level2">
+<section id="section-4" class="slide level2">
 <h2></h2>
 <h3 id="each-rule-visualized">Each rule visualized</h3>
 <div class="column" style="width:25%;">
@@ -256,7 +311,7 @@ Group 22
 </figure>
 </div>
 </div></section>
-<section id="section-3" class="slide level2">
+<section id="section-5" class="slide level2">
 <h2></h2>
 <h3 id="state-of-pharmaceuitcal-products">State of pharmaceuitcal products</h3>
 

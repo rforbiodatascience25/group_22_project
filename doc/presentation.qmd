@@ -40,17 +40,60 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 
 ### Features
 
+::: {style="font-size: 0.8em;"}
 -   UniProt names - Biological targets
 -   Side effects - most frequent side effects
 -   SMILES - chemical structure
 -   Lipinski Rule - rule of thumb for successfull medicines
 -   State - commercial, veterinary, experimental
+-   Indications - target illness or symptom of drug
+:::
 
-## Results
+![](presentation_files/figures/Description_violin_plot.png){width="50%"}
 
-### Analysis 1
+## 
 
-Describe results here
+### Analysis 1 - Correlations
+
+::: {.column width="33%"}
+![Reports vs. Frequency](presentation_files/figures/Analysis1_reports_vs_freq.png)
+:::
+
+::: {.column width="33%"}
+![Targets vs. SE](presentation_files/figures/Analysis1_targets_se_correl.png)
+:::
+
+::: {.column width="33%"}
+![Indications vs. SE](presentation_files/figures/Analysis1_indications_se_correl.png)
+:::
+
+1: Some common side effects may be generally more frequent
+
+2: Amount of biological targets of a drug show no clear relationship with number of side effects
+
+3: Indications (illness/symptom targeted) show some correlation with number of side effects
+
+## 
+
+### Analysis 1 - Co-occurrence Patterns
+
+::: {.column width="33%"}
+![Indications vs. SE (counts)](presentation_files/figures/Analysis1_co_occ_indic.png)
+:::
+
+::: {.column width="33%"}
+![Indications vs. SE (frequency)](presentation_files/figures/Analysis1_co_occ_indic_freq.png)
+:::
+
+::: {.column width="33%"}
+![Protein Targets vs. SE](presentation_files/figures/Analysis1_co_occ_targets.png)
+:::
+
+1: Infection and kidney disease seem to have most overlap with side effects
+
+2: Breast cancer has low co-occ but higher frequencies
+
+3: We can see what receptors often light up and give the common side effects
 
 ## 
 
@@ -75,19 +118,27 @@ Rules:
 :::
 
 ## 
+
 ### Each rule visualized
+
 ::: {.column width="25%"}
 ![HBD Counts](presentation_files/figures/Analysis2_HBD_count.png)
 :::
+
 ::: {.column width="25%"}
 ![HBA Counts](presentation_files/figures/Analysis2_HBA_count.png)
 :::
+
 ::: {.column width="25%"}
 ![MW Density](presentation_files/figures/Analysis2_MW_density.png)
 :::
+
 ::: {.column width="25%"}
 ![LogP Density](presentation_files/figures/Analysis2_LogP_density.png)
 :::
-##
+
+## 
+
 ### State of pharmaceuitcal products
+
 ![Legality and Lipinski Rule](presentation_files/figures/Analysis2_Lipinski_Legal.png)
