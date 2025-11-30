@@ -1,14 +1,25 @@
-# Drug Side-Effect and Target Analysis  
-Final Project – Group 22  
+# Drug Side-Effect and Target Analysis
+
+Final Project – Group 22\
 R for Bio Data Science (DTU)
+
+## Contributors:
+
+#### Malte Lau (s224183) - Malteflau
+
+#### Duco Lam (252126) - DucoLam
+
+#### Benedek Dunavolgyi (s243161) - adunavolgyi
+
+#### Manuel Charneca (s253708) - Manuelidk
 
 This repository contains a complete workflow for acquiring, cleaning, merging, and analyzing drug side-effect data. The project integrates two major data sources (SIDER and DrugBank) and investigates how drug targets and molecular properties relate to observed clinical side effects.
 
----
+------------------------------------------------------------------------
 
 ## Repository Structure
 
-```text
+``` text
 R/
   00_all.qmd            Run entire pipeline
   01_load.qmd           Download SIDER and DrugBank data
@@ -23,9 +34,11 @@ R/
 data/                   Cleaned data outputs  
 results/                Plots and analysis figures
 ```
----
+
+------------------------------------------------------------------------
 
 # Pipeline Summary
+
 ## 1. Loading (01_load.qmd)
 
 Downloads SIDER and DrugBank datasets, assigns column names, and exports raw tables. DrugBank files require user credentials.
@@ -86,25 +99,18 @@ Total number of unique side effects (side-effect burden)
 
 Includes distribution plots and scatter/boxplots.
 
----
+------------------------------------------------------------------------
 
 # Reproducibility
 
-Required packages include:
-tidyverse, purrr, readr, stringr, curl, rcdk, and RChemMass.
+Required packages include: tidyverse, purrr, readr, stringr, curl, rcdk, Rcpi, and RChemMass.
 
 To rerun the full pipeline:
-```r
+
+``` r
 quarto render R/00_all.qmd
 ```
----
 
-## Contributors:
-#### Malte Lau (s224183) - Malteflau
-#### Duco Lam (252126) - DucoLam
-#### Benedek Dunavolgyi (s243161) - adunavolgyi
-#### Manuel Charneca (s253708) - Manuelidk
+------------------------------------------------------------------------
 
-
-Group 22
-R for Bio Data Science, DTU
+Group 22 R for Bio Data Science, DTU
