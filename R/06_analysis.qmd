@@ -51,7 +51,7 @@ df_drug <- df |>
 
 ```{r}
 # Histogram for H-bond donors (HBD) 
-df_drug |>
+hbd_hist <- df_drug |>
   ggplot(aes(x = hbd,
              y = ..count.. / sum(..count..) * 100)) +
   geom_histogram(binwidth = 1,
@@ -65,7 +65,7 @@ ggsave(paste0(results_path,"Analysis2_HBD_count.png"), plot = last_plot(),
        width = 8, height = 6, dpi = 300)
 
 # Histogram for H-bond acceptors (HBA) 
-df_drug |>
+hba_hist <- df_drug |>
   ggplot(aes(x = hba,
              y = ..count.. / sum(..count..) * 100)) +
   geom_histogram(binwidth = 1,
@@ -79,7 +79,7 @@ ggsave(paste0(results_path,"Analysis2_HBA_count.png"), plot = last_plot(),
        width = 8, height = 6, dpi = 300)
 
 # Bar plot for Lipinski rule compliance as percentage
-df_drug |>
+lipinski_bar <- df_drug |>
   ggplot(aes(x = lipinski,
              y = ..count.. / sum(..count..) * 100)) +
   geom_bar(fill = "steelblue",
@@ -93,7 +93,7 @@ ggsave(paste0(results_path,"Analysis2_Lipinski_percent.png"), plot = last_plot()
 
 
 # Density plot for Molecular Weight (MW)
-df_drug |>
+mw_density <- df_drug |>
   ggplot(aes(x = molecular_weight)) +
   geom_density(fill = "lightgreen",
                alpha = 0.6) +
@@ -104,7 +104,7 @@ ggsave(paste0(results_path,"Analysis2_MW_density.png"), plot = last_plot(),
        width = 8, height = 6, dpi = 300)
 
 # Density plot for LogP (ClogP)
-df_drug |>
+logp_density <- df_drug |>
   ggplot(aes(x = clog_p)) +
   geom_density(fill = "lightgreen",
                alpha = 0.6) +
@@ -120,7 +120,7 @@ ggsave(paste0(results_path,"Analysis2_LogP_density.png"), plot = last_plot(),
 ```{r}
 
 # HBD vs side-effect burden
-df_drug |>
+hbd_burden <- df_drug |>
   ggplot(aes(x = hbd,
              y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
@@ -131,7 +131,7 @@ ggsave(paste0(results_path,"Analysis2_HBD_SE.png"), plot = last_plot(),
        width = 8, height = 6, dpi = 300)
 
 # HBA vs side-effect burden
-df_drug |>
+hba_burden <- df_drug |>
   ggplot(aes(x = hba,
              y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
@@ -143,7 +143,7 @@ ggsave(paste0(results_path,"Analysis2_HBA_SE.png"), plot = last_plot(),
        width = 8, height = 6, dpi = 300)
 
 # Molecular Weight vs side-effect burden
-df_drug |>
+mw_burden <- df_drug |>
   ggplot(aes(x = molecular_weight,
              y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
@@ -154,7 +154,7 @@ ggsave(paste0(results_path,"Analysis2_MW_SE.png"), plot = last_plot(),
        width = 8, height = 6, dpi = 300)
 
 # LogP vs side-effect burden
-df_drug |>
+logp_burden <- df_drug |>
   ggplot(aes(x = clog_p,
              y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
@@ -166,7 +166,7 @@ ggsave(paste0(results_path,"Analysis2_LogP_SE.png"), plot = last_plot(),
 
 
 # Lipinski rule vs side-effect burden
-df_drug |>
+lipinkski_burden <- df_drug |>
   ggplot(aes(x = lipinski,
              y = side_effect_burden)) +
   geom_boxplot(fill = "steelblue", color = "black") +
@@ -189,7 +189,7 @@ df_counts <- df_legal |>
   summarise(n_drugs = n_distinct(common_name), .groups = "drop")
 
 
-ggplot(df_counts,
+legal_plot <- ggplot(df_counts,
        aes(x = drug_groups,
            y = n_drugs,
            fill = lipinski)) +

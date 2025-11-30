@@ -1,24 +1,54 @@
 ---
-title: "presentation"
-format: revealjs
+title: "R4BDS - Final Project"
+subtitle: "Drug Side-Effect and Target Analysis"
+format: 
+  revealjs:
+    footer: "22160 - R for Bio Data Science, 02/12/2025"
+    slide-number: c/t
+    show-slide-number: all
+author: "Group 22"
 editor: visual
 ---
 
-## Quarto
+## Introduction
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+**Our goal**: finding correlation between drug side effects, biological targets, chemical properties.
 
-## Bullets
+The project integrates two major data sources, **SIDER** and **DrugBank**.
 
-When you click the **Render** button a document will be generated that includes:
+::: {.column width="50%"}
+![DrugBank](presentation_files/figures/DrugBank_logo.png)
+:::
 
--   Content authored with markdown
--   Output from executable code
+::: {.column width="50%"}
+![SIDER](presentation_files/figures/EMBL_Logo.png)
+:::
 
-## Code
+## Materials and Methods
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+### Databases
 
-```{r}
-1 + 1
-```
+::: callout-note
+**SIDER** contains information on marketed medicines and their recorded adverse drug reactions. The information is extracted from public documents and package inserts. The database include side effect frequency, drug and side effect classifications and more.
+:::
+
+::: callout-note
+**DrugBank** is a comprehensive database of marketed, veterinary and experimental pharmaceutical products, containing chemical various linked database ids, chemical structures and properties as well as biological targets.
+:::
+##
+### Features
+ - UniProt names - Biological targets
+ - Side effects - most frequent side effects
+ - SMILES - chemical structure
+ - Lipinski Rule - rule of thumb for successfull medicines
+ - State - commercial, veterinary, experimental
+
+## Results
+### Analysis 1
+Describe results here
+
+
+##
+### Analysis 2
+In this analysis, the correlation between the Lipinksi Rule of 5 and the number of side effects was investigated.
+

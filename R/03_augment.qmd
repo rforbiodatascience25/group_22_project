@@ -13,6 +13,7 @@ editor: visual
 library(tidyverse)
 library(dplyr)
 library(stringr)
+library(rJava)
 library(rcdk)
 library(RChemMass)
 library(rJava)
