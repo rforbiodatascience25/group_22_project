@@ -21,6 +21,7 @@ source("99_proj_func.R")
 #| warning: false
 data_path = "../data/"
 results_path = "../results/"
+presentation_path = "..doc/presentation_files/figures/"
 df <- read_tsv(paste0(data_path, "merged_data.tsv"))
 ```
 
@@ -63,7 +64,9 @@ hbd_hist <- df_drug |>
 
 ggsave(paste0(results_path,"Analysis2_HBD_count.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
-
+ggsave(paste0(presentation_path,"Analysis2_HBD_count.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+hbd_hist
 # Histogram for H-bond acceptors (HBA) 
 hba_hist <- df_drug |>
   ggplot(aes(x = hba,
@@ -77,7 +80,9 @@ hba_hist <- df_drug |>
 
 ggsave(paste0(results_path,"Analysis2_HBA_count.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
-
+ggsave(paste0(presentation_path,"Analysis2_HBA_count.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+hba_hist
 # Bar plot for Lipinski rule compliance as percentage
 lipinski_bar <- df_drug |>
   ggplot(aes(x = lipinski,
@@ -91,7 +96,7 @@ lipinski_bar <- df_drug |>
 ggsave(paste0(results_path,"Analysis2_Lipinski_percent.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
 
-
+lipinski_bar
 # Density plot for Molecular Weight (MW)
 mw_density <- df_drug |>
   ggplot(aes(x = molecular_weight)) +
@@ -102,7 +107,9 @@ mw_density <- df_drug |>
        y = "Density")
 ggsave(paste0(results_path,"Analysis2_MW_density.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
-
+ggsave(paste0(presentation_path,"Analysis2_MW_density.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+mw_density
 # Density plot for LogP (ClogP)
 logp_density <- df_drug |>
   ggplot(aes(x = clog_p)) +
@@ -113,6 +120,9 @@ logp_density <- df_drug |>
        y = "Density")
 ggsave(paste0(results_path,"Analysis2_LogP_density.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
+ggsave(paste0(presentation_path,"Analysis2_LogP_density.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+logp_density
 ```
 
 ## Correlation plots with side-effect burden
@@ -129,7 +139,7 @@ hbd_burden <- df_drug |>
        y = "Number of Side Effects")
 ggsave(paste0(results_path,"Analysis2_HBD_SE.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
-
+hbd_burden
 # HBA vs side-effect burden
 hba_burden <- df_drug |>
   ggplot(aes(x = hba,
@@ -141,7 +151,7 @@ hba_burden <- df_drug |>
 
 ggsave(paste0(results_path,"Analysis2_HBA_SE.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
-
+hba_burden
 # Molecular Weight vs side-effect burden
 mw_burden <- df_drug |>
   ggplot(aes(x = molecular_weight,
@@ -152,7 +162,7 @@ mw_burden <- df_drug |>
        y = "Number of Side Effects")
 ggsave(paste0(results_path,"Analysis2_MW_SE.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
-
+mw_burden
 # LogP vs side-effect burden
 logp_burden <- df_drug |>
   ggplot(aes(x = clog_p,
@@ -164,7 +174,7 @@ logp_burden <- df_drug |>
 ggsave(paste0(results_path,"Analysis2_LogP_SE.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
 
-
+logp_burden
 # Lipinski rule vs side-effect burden
 lipinkski_burden <- df_drug |>
   ggplot(aes(x = lipinski,
@@ -175,6 +185,9 @@ lipinkski_burden <- df_drug |>
        y = "Number of Side Effects")
 ggsave(paste0(results_path,"Analysis2_Lipinski_SE.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
+ggsave(paste0(presentation_path,"Analysis2_Lipinski_SE.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+lipinkski_burden
 ```
 
 ## Legality state
@@ -203,5 +216,7 @@ legal_plot <- ggplot(df_counts,
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(paste0(results_path,"Analysis2_Lipinski_Legal.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
-
+ggsave(paste0(presentation_path,"Analysis2_Lipinski_Legal.png"), plot = last_plot(), 
+       width = 8, height = 6, dpi = 300)
+legal_plot
 ```

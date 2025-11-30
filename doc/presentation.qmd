@@ -35,20 +35,59 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 ::: callout-note
 **DrugBank** is a comprehensive database of marketed, veterinary and experimental pharmaceutical products, containing chemical various linked database ids, chemical structures and properties as well as biological targets.
 :::
-##
+
+## 
+
 ### Features
- - UniProt names - Biological targets
- - Side effects - most frequent side effects
- - SMILES - chemical structure
- - Lipinski Rule - rule of thumb for successfull medicines
- - State - commercial, veterinary, experimental
+
+-   UniProt names - Biological targets
+-   Side effects - most frequent side effects
+-   SMILES - chemical structure
+-   Lipinski Rule - rule of thumb for successfull medicines
+-   State - commercial, veterinary, experimental
 
 ## Results
+
 ### Analysis 1
+
 Describe results here
 
+## 
 
-##
 ### Analysis 2
+
 In this analysis, the correlation between the Lipinksi Rule of 5 and the number of side effects was investigated.
 
+::: {.column width="50%"}
+Rules:
+
+-   HBA count ≤ 10
+
+-   HBD count ≤ 5
+
+-   MW ≤ 500
+
+-   Calculated log P ≤ 0.5
+:::
+
+::: {.column width="50%"}
+![Lipinksi Rule and number of side effects](presentation_files/figures//Analysis2_Lipinski_SE.png)
+:::
+
+## 
+### Each rule visualized
+::: {.column width="25%"}
+![HBD Counts](presentation_files/figures/Analysis2_HBD_count.png)
+:::
+::: {.column width="25%"}
+![HBA Counts](presentation_files/figures/Analysis2_HBA_count.png)
+:::
+::: {.column width="25%"}
+![MW Density](presentation_files/figures/Analysis2_MW_density.png)
+:::
+::: {.column width="25%"}
+![LogP Density](presentation_files/figures/Analysis2_LogP_density.png)
+:::
+##
+### State of pharmaceuitcal products
+![Legality and Lipinski Rule](presentation_files/figures/Analysis2_Lipinski_Legal.png)

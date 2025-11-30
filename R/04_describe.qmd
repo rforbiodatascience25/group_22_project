@@ -53,7 +53,7 @@ For the merged dataframe of Drugbank and SIDER we have the following central val
 
 -   Clog P: the calculated logarithm of the partition coefficient (P) between octanol and water; a measure of the compound’s lipophilicity.
 
--   Lipinski: whether the molecule follows Lipinski’s Rule of Five (only 4 rules though) (MW ≤ 500, Clog P ≤ 5, HBD ≤ 5, HBA ≤ 10), indicating good likelihood of oral bioavailability.
+-   Lipinski: whether the molecule follows Lipinski’s Rule of Five (MW ≤ 500, Clog P ≤ 5, HBD ≤ 5, HBA ≤ 10), indicating good likelihood of oral bioavailability.
 
 -   side_effect_PT: what side effects are listed with a certain drug
 
