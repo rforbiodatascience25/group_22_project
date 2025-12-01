@@ -26,9 +26,8 @@ R/
   02_clean.qmd          Clean and merge datasets
   03_augment.qmd        Add physicochemical descriptors
   04_describe.qmd       Describes the variables withing our Dataset
-  05_analysis_1.qmd     Global analyses (side effects, targets, indications)
-  05_analysis_2.qmd     Targeted analyses (hormonal and stress-axis receptors)
-  06_analysis_2.qmd     Descriptor distributions and side-effect burden
+  05_analysis.qmd     Global analyses (side effects, targets, indications)
+  06_analysis.qmd     Descriptor distributions and side-effect burden
   99_proj_func.R        Helper functions
 
 data/                   Cleaned data outputs  
@@ -77,8 +76,6 @@ Co-occurrence patterns (indications vs. side effects, protein targets vs. side e
 
 Normalized heatmaps using average frequency rates
 
-## 6. Targeted Receptor Analyses (05_analysis_2.qmd)
-
 Tests expected biological relationships:
 
 Drugs targeting hormone-related receptors show higher proportions of endocrine side effects.
@@ -87,7 +84,7 @@ Drugs targeting stress-axis receptors show higher proportions of metabolic side 
 
 Corresponding figures are saved in results/.
 
-## 7. Descriptor and Burden Analysis (06_analysis_2.qmd)
+## 6. Descriptor and Burden Analysis (06_analysis_2.qmd)
 
 Aggregates side effects per drug and evaluates relationships between:
 
