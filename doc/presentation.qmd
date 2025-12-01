@@ -39,7 +39,7 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 ## 
 
 ### Features
-
+::: {.column width="50%"}
 ::: {style="font-size: 0.8em;"}
 -   UniProt names - Biological targets
 -   Side effects - most frequent side effects
@@ -48,9 +48,10 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 -   State - commercial, veterinary, experimental
 -   Indications - target illness or symptom of drug
 :::
-
-![](presentation_files/figures/Description_violin_plot.png){width="50%"}
-
+:::
+::: {.column width="50%"}
+![](presentation_files/figures/Description_violin_plot.png){width="100%"}
+:::
 ## Data Handling Workflow
 
 ![](presentation_files/figures/Process%20Diagram%20Graph_3.png){width="100%"}
@@ -70,13 +71,13 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 ::: {.column width="33%"}
 ![Indications vs. SE](presentation_files/figures/Analysis1_indications_se_correl.png)
 :::
-
+::: {style="font-size: 0.8em;"}
 1: Some common side effects may be generally more frequent
 
 2: Amount of biological targets of a drug show no clear relationship with number of side effects
 
 3: Indications (illness/symptom targeted) show some correlation with number of side effects
-
+:::
 ## 
 
 ### Analysis 1 Part 1 - Co-occurrence Patterns
@@ -92,13 +93,13 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 ::: {.column width="33%"}
 ![Protein Targets vs. SE](presentation_files/figures/Analysis1_co_occ_targets.png)
 :::
-
+::: {style="font-size: 0.8em;"}
 1: Infection and kidney disease seem to have most overlap with side effects
 
 2: Breast cancer has low co-occ but higher frequencies
 
 3: We can see what receptors often light up and give the common side effects
-
+:::
 ## 
 
 ### Analysis 1 Part 2 - Nuance into Side-Effect Correlations
@@ -155,14 +156,18 @@ Rules:
 ![LogP Density](presentation_files/figures/Analysis2_LogP_density.png)
 :::
 ::: {.column width="50%"}
+::: {style="font-size: 0.8em;"}
 1: More than 90% of molecules have ≤ 5 HBD and ≤ 10 HBA.
 
 2: So only less than 10% do not follow the rule for HBD and HBA.
 :::
+:::
 ::: {.column width="50%"}
+::: {style="font-size: 0.8em;"}
 3: 0 and 600 MW and -0.5 and 0.1 logP
 
 4: Most molecules in the dataset break the Lipinski rules.
+:::
 :::
 ## 
 
