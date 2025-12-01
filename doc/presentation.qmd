@@ -103,6 +103,9 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 ## 
 
 ### Analysis 1 Part 2 - Nuance into Side-Effect Correlations
+::: {style="font-size: 0.8em;"}
+In this part of the first analysis, we find direct links between drug targets and their side-effects!
+:::
 
 ::: {.column width="50%"}
 ![](presentation_files/figures/Analysis1.2_Endocrine.png)
@@ -112,7 +115,7 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 ![](presentation_files/figures/Analysis1.2_Metabolic.png)
 :::
 
-In this part of the first analysis, we find direct links between drug targets and their side-effects!
+
 
 ## 
 
