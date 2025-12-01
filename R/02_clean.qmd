@@ -58,6 +58,7 @@ drug_atc <- read_tsv(
 ## Merging the tables of the SIDER data set, removing redundant and unnecessary rows
 
 ```{r}
+#| warning: false
 # Aggregate drug names per STITCH_flat
 drug_names_agg <- drug_names |>
   group_by(STITCH_flat)|>
@@ -79,8 +80,8 @@ sider_freq_pt <- sider_freq |>
   mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) |>
   filter(MedDRA_concept_type == "PT") |>
   mutate(
-    freq_lower_num = suppressWarnings(as.numeric(freq_lower)),
-    freq_upper_num = suppressWarnings(as.numeric(freq_upper))
+    freq_lower_num = as.numeric(freq_lower),
+    freq_upper_num = as.numeric(freq_upper)
   )
 
 sider_freq_agg <- sider_freq_pt |>
