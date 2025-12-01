@@ -54,7 +54,7 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 :::
 ## Data Handling Workflow
 
-![](presentation_files/figures/Process%20Diagram%20Graph_3.png){width="100%"}
+![](presentation_files/figures/Data Process Diagram Graph (1).png){width="100%"}
 
 ## 
 
