@@ -28,36 +28,37 @@ source("99_proj_func.R")
 #| message: false
 
 data_path = "../data/"
-raw_path = paste0(data_path, "_raw/")
-sider_path = paste0(raw_path, "sider/")
-drugbank_path = paste0(raw_path, "drugbank/")
+raw_path = str_c(data_path, "_raw/")
+sider_path = str_c(raw_path, "sider/")
+drugbank_path = str_c(raw_path, "drugbank/")
 
 # Load side effects (meddra_all_se)
 sider_se <- read_tsv(
-  paste0(data_path,"sider_se.tsv"))
+  str_c(data_path,"sider_se.tsv"))
 
 # Load frequency data (meddra_freq)
 sider_freq <- read_tsv(
-  paste0(data_path,"sider_freq.tsv"))
+  str_c(data_path,"sider_freq.tsv"))
 
 # Load indications (meddra_all_indications)
 sider_indications <- read_tsv(
-  paste0(data_path,"sider_indications.tsv"))
+  str_c(data_path,"sider_indications.tsv"))
 
 # Load drug names
 drug_names <- read_tsv(
-  paste0(data_path,"drug_names.tsv"))
+  str_c(data_path,"drug_names.tsv"))
 
 
 # Load ATC codes
 drug_atc <- read_tsv(
-  paste0(data_path,"drug_atc.tsv"))
+  str_c(data_path,"drug_atc.tsv"))
 
 ```
 
 ## Merging the tables of the SIDER data set, removing redundant and unnecessary rows
 
 ```{r}
+#| warning: false
 # Aggregate drug names per STITCH_flat
 drug_names_agg <- drug_names |>
   group_by(STITCH_flat)|>
@@ -79,8 +80,8 @@ sider_freq_pt <- sider_freq |>
   mutate(MedDRA_concept_type = trimws(MedDRA_concept_type)) |>
   filter(MedDRA_concept_type == "PT") |>
   mutate(
-    freq_lower_num = suppressWarnings(as.numeric(freq_lower)),
-    freq_upper_num = suppressWarnings(as.numeric(freq_upper))
+    freq_lower_num = as.numeric(freq_lower),
+    freq_upper_num = as.numeric(freq_upper)
   )
 
 sider_freq_agg <- sider_freq_pt |>
@@ -89,7 +90,11 @@ sider_freq_agg <- sider_freq_pt |>
     placebo = {
       vals <- unique(trimws(placebo))
       vals <- vals[vals != "" & !is.na(vals)]
-      if ("placebo" %in% vals) "yes" else "no"
+      
+      case_when(
+        "placebo" %in% vals ~ "yes",
+        TRUE ~ "no"
+      )
     },
 
     freq_text = join_unique(freq_description),
@@ -144,7 +149,7 @@ drug_complete
 ## Saving the SIDER data set to a local file
 
 ```{r}
-write_tsv(drug_complete, paste0(data_path,"sider_full_clean.tsv"))
+write_tsv(drug_complete, str_c(data_path,"sider_full_clean.tsv"))
 ```
 
 ## Loading Drugbank datasets
@@ -153,9 +158,9 @@ write_tsv(drug_complete, paste0(data_path,"sider_full_clean.tsv"))
 #| warning: false
 #| error: false
 #| message: false
-vocabulary <- read_tsv(paste0(data_path,"drugbank_vocabulary.tsv"))
-structures <- read_tsv(paste0(data_path,"drugbank_structures.tsv"))
-targets <- read_tsv(paste0(data_path,"drugbank_targets.tsv"))
+vocabulary <- read_tsv(str_c(data_path,"drugbank_vocabulary.tsv"))
+structures <- read_tsv(str_c(data_path,"drugbank_structures.tsv"))
+targets <- read_tsv(str_c(data_path,"drugbank_targets.tsv"))
 ```
 
 ## Cleaning and Merging the Drugbank datasets
@@ -212,7 +217,14 @@ drugbank_merged <- vocabulary |>
   inner_join(targets, by = "drugbank_id")
 
 #remove all duplicated collums
-drugbank_merged <- select(drugbank_merged, -"cas.x", -"cas.y", -"inchikey", -"name.x", -"name.y", -"synonyms", -"inchi", -"standard_inchi_key", -"accession_numbers", -"unii", -"kegg_compound_id", -"kegg_drug_id", -"pubchem_compound_id", -"pubchem_substance_id", -"chebi_id", -"ChEMBL ID", -"het_id", -"chemspider_id", -"bindingdb_id", -"uniprot_id", -"type")
+drugbank_merged <- select(drugbank_merged, -"cas.x", -"cas.y", -"inchikey", 
+                          -"name.x", -"name.y", -"synonyms", -"inchi", 
+                          -"standard_inchi_key", -"accession_numbers", -"unii", 
+                          -"kegg_compound_id", -"kegg_drug_id", 
+                          -"pubchem_compound_id", -"pubchem_substance_id", 
+                          -"chebi_id", -"ChEMBL ID", -"het_id", 
+                          -"chemspider_id", -"bindingdb_id", -"uniprot_id", 
+                          -"type")
 
 drugbank_merged
 ```
@@ -220,5 +232,5 @@ drugbank_merged
 ## Exporting Drugbank Data
 
 ```{r}
-write_tsv(drugbank_merged, paste0(data_path,"drugbank_full_clean.tsv"))
+write_tsv(drugbank_merged, str_c(data_path,"drugbank_full_clean.tsv"))
 ```
