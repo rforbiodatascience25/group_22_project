@@ -12,6 +12,7 @@ editor: visual
 library(tidyverse)
 library(dplyr)
 library(stringr)
+library(readr)
 source("99_proj_func.R")
 ```
 
@@ -22,16 +23,19 @@ In this part of the data analysis, we will be exploring the SIDER and Drugbank d
 Load merged data from Drugbank and SIDER.
 
 ```{r}
+#| warning: false
+#| message: false
 results_path = "../results/"
 df <- read_tsv("../data/merged_data.tsv")
 
-# calculate the side effect rates used for correlation plot. we need to extract the list of frequencies and calculate the average over that
+# calculate the side effect rates used for correlation plot. we need to 
+# extract the list of frequencies and calculate the average over that
 side_effect_rates <- df |> 
   mutate(percent = str_split(freq_text, ";")) |>
   unnest(percent) |> 
   mutate(
     percent = trimws(percent),                  
-    percent = readr::parse_number(percent)        
+    percent = parse_number(percent)        
   ) |> 
   drop_na(percent) |> 
   group_by(side_effect_PT) |> 
@@ -47,15 +51,19 @@ side_effect_rates <- df |>
 Let's just check what we're dealing with here
 
 ```{r}
+#| warning: false
 side_effect_rates |> arrange(desc(n_reports))
 ```
 
 Nausea, headache, vomiting, dizziness are all among the top reported side effects which seems to make sense.
 
 ```{r}
+#| warning: false
+#| message: false
 # Compute and print the correlation
-correlation <- cor(side_effect_rates$n_reports, side_effect_rates$avg_rate, use = "complete.obs")
-print(paste("Correlation between number of reports and average frequency rate:", round(correlation, 3)))
+correlation <- cor(side_effect_rates$n_reports, side_effect_rates$avg_rate, 
+                   use = "complete.obs")
+print(str_c("Correlation between number of reports and average frequency rate:", round(correlation, 3)))
 
 # Plot
 plot_correlation <- side_effect_rates |>
@@ -64,12 +72,12 @@ plot_correlation <- side_effect_rates |>
   geom_smooth(method = "lm", color = "red") +
   labs(
     title = "Correlation: Number of Reports vs. Frequency Rate",
-    subtitle = paste("Correlation coefficient:", round(correlation, 3)),
+    subtitle = str_c("Correlation coefficient:", round(correlation, 3)),
     x = "Number of Reports (Drug + Side Effect Pairs)",
     y = "Average Frequency Rate (%)"
   ) +
   theme_minimal()
-ggsave(paste0(results_path,"Analysis1_reports_vs_freq.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis1_reports_vs_freq.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
 print(plot_correlation)
 ```
@@ -79,8 +87,9 @@ Here we checked the average reported frequency of a side effect dependent on how
 For this next analysis we try to see if there is a correlation between illness treatment and experienced side effects
 
 ```{r}
-# We only filter for the top 20 indications and top 20 side effects to make this viewable
-# top 20 indications (treatment target)
+#| warning: false
+# We only filter for the top 20 indications and top 20 side effects to 
+# make this viewable top 20 indications (treatment target)
 top_indications <- df |>
   separate_rows(indication_PT, sep = ";") |>
   mutate(indication_PT = trimws(indication_PT)) |>
@@ -114,7 +123,7 @@ plot_matrix <- df |>
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(paste0(results_path,"Analysis1_co_occ_indic.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis1_co_occ_indic.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
 print(plot_matrix)
 ```
@@ -122,6 +131,8 @@ print(plot_matrix)
 This co-occurrence matrix is meant to show if specific common side effects are tied to specific treatment indications. The data is hard to analyze as we can see that Nausea and Vomiting is tied to Infection which also seems to be a common effect of Infections in general. This illustration seems to just show the most common reports. To combat this we can use the frequencies instead, which is in the next plot.
 
 ```{r}
+#| warning: false
+
 plot_matrix_normalized_data <- df |> 
   mutate(percent = str_split(freq_text, ";")) |> 
   unnest(percent) |> 
@@ -151,6 +162,8 @@ plot_matrix_normalized_data <- df |>
 ```
 
 ```{r}
+#| warning: false
+
 plot_matrix_normalized <- plot_matrix_normalized_data |>
   ggplot(aes(x = side_effect_PT, y = indication_PT, fill = avg_rate)) +
   geom_tile() +
@@ -167,8 +180,8 @@ plot_matrix_normalized <- plot_matrix_normalized_data |>
     plot.subtitle = element_text(hjust = 0.5)
   )
 
-ggsave(paste0(results_path,"Analysis1_co_occ_indic_freq.png"), plot = last_plot(), 
-       width = 8, height = 6, dpi = 300)
+ggsave(str_c(results_path,"Analysis1_co_occ_indic_freq.png"), 
+       plot = last_plot(), width = 8, height = 6, dpi = 300)
 # show plot
 plot_matrix_normalized
 ```
@@ -176,7 +189,11 @@ plot_matrix_normalized
 This frequency matrix shows instead where a large % of side effects are experienced. In drugs that are used to treat breast cancer we often see Diarrhoea, Nausea, Feeling abnormal and Vomiting which may be expected which such a serious illness. Neoplasm is tumor growth and we see frequent Nausea and Gastrointenstinal pain, which again makes sense. We can also see that Hypertension rarely leads to any of these side effects when treated. Some of the serious diseases seem to be more yellow on the chart which might make sense as a more side effects may be allowed.
 
 ```{r}
-# In this snippet, we research if we can see the receptor that the drug targets is closely linked with specific side effects. again we just take top 20
+#| warning: false
+
+# In this snippet, we research if we can see the receptor that the 
+# drug targets is closely linked with specific side effects. 
+# Again we just take top 20
 top_targets <- df |>
   #some of them have multiple receptors but some only have 1, we split anyway
   separate_rows(uniprot_names, sep = ";") |>  
@@ -209,7 +226,7 @@ plot_targets_se <- df |>
 
 
 ggsave(
-  paste0(results_path, "Analysis1_co_occ_targets.png"),
+  str_c(results_path, "Analysis1_co_occ_targets.png"),
   plot = plot_targets_se,
   width = 8, height = 6, dpi = 300
 )
@@ -221,6 +238,9 @@ print(plot_targets_se)
 Here we can see some co-occurrences between what biological target/receptor is treated and what type of side effect is experienced.
 
 ```{r}
+#| warning: false
+#| message: false
+
 # plot biological targets vs side effects
 drug_targets_se <- df |>
   mutate(uniprot_names = str_split(uniprot_names, ";")) |> 
@@ -244,13 +264,14 @@ plot_targets_vs_se <- drug_targets_se |>
   geom_smooth(method = "lm", color = "red", se = TRUE) +
   labs(
     title = "Number of Biological Targets vs. Number of Side Effects",
-    subtitle = paste("Correlation:", round(cor_targets, 3)),
+    subtitle = str_c("Correlation:", round(cor_targets, 3)),
     x = "Number of Protein Targets",
     y = "Number of Unique Side Effects"
   ) +
   theme_minimal()
 
-ggsave(paste0(results_path,"Analysis1_targets_se_correl.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis1_targets_se_correl.png"), 
+       plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
 print(plot_targets_vs_se)
 ```
@@ -258,6 +279,9 @@ print(plot_targets_vs_se)
 We see no explicit relation between the amount of protein targets a given drug has versus the amount of side effects it gives, which is surprising.
 
 ```{r}
+#| warning: false
+#| message: false
+
 # plot indications vs side effects
 drug_indications_se <- df |>
   mutate(ind = str_split(indication_PT, ";"), 
@@ -270,7 +294,8 @@ drug_indications_se <- df |>
     .groups = "drop"
   )
 
-cor_indications <- cor(drug_indications_se$n_indications, drug_indications_se$n_side_effects,
+cor_indications <- cor(drug_indications_se$n_indications, 
+                       drug_indications_se$n_side_effects,
                        use = "complete.obs")
 
 # Plot
@@ -280,13 +305,14 @@ plot_indications_vs_se <- drug_indications_se |>
   geom_smooth(method = "lm", color = "red", se = TRUE) +
   labs(
     title = "Indications vs. Side Effects",
-    subtitle = paste("Correlation:", round(cor_indications, 3)),
+    subtitle = str_c("Correlation:", round(cor_indications, 3)),
     x = "Number of Indications",
     y = "Number of Unique Side Effects"
   ) +
   theme_minimal()
 
-ggsave(paste0(results_path,"Analysis1_indications_se_correl.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis1_indications_se_correl.png"), 
+       plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
 print(plot_indications_vs_se)
 ```
@@ -300,12 +326,14 @@ Specifically, lets look at drugs that hormonal targets, and lets look at their s
 ### First we find drugs that have hormonal targets
 
 ```{r}
+#| warning: false
+
 # We define keywords for known hormonal targets.
 hormone_targets <- c("estrogen","androgen","progesterone","glucocorticoid",
                      "thyroid","mineralocorticoid")
 
 # We turn this into a pattern
-hormone_pattern <- paste(hormone_targets, collapse="|")
+hormone_pattern <- str_c(hormone_targets, collapse="|")
 
 # And add a column for whether the drug targets hormonal receptors
 hormonal_drugs <- df |> mutate(
@@ -320,15 +348,17 @@ table(hormonal_drugs$hormone_target, useNA = "ifany")
 ### Next we mark the drugs that have endocrine side-effects
 
 ```{r}
+#| warning: false
+
 # Now we define keywords for known endocrine side-effects
 endo_terms <- c("Gyne", "Hormon", "Menstru", "Sex", "Endocr")
 
 # We turn this into a pattern
-endo_pattern <- paste(endo_terms, collapse = "|")
+endo_pattern <- str_c(endo_terms, collapse = "|")
 
 # And add a column for whether the drug has endocrine side effects
 hormonal_drugs_endo_targets <- hormonal_drugs |> mutate(
-  endocrine_se = str_detect(side_effect_PT, paste(endo_terms, collapse="|"))
+  endocrine_se = str_detect(side_effect_PT, str_c(endo_terms, collapse="|"))
   )
 
 # Then we check how many TRUEs did we get, if any at all?
@@ -338,6 +368,8 @@ table(hormonal_drugs_endo_targets$endocrine_se, useNA = "ifany")
 ### Finally we plot our correlation
 
 ```{r}
+#| warning: false
+
 # Finally we make a plot
 hormonal_drugs_endo_targets |>
   group_by(hormone_target) |>
@@ -371,6 +403,8 @@ ggsave("../results/Analysis1.2_Endocrine.png", plot = last_plot(),
 ```
 
 ```{r}
+#| warning: false
+
 # Calculate and print the exact bar heights
 bar_heights <- hormonal_drugs_endo_targets |>
   group_by(hormone_target) |>
@@ -388,11 +422,13 @@ Specifically, we are going to examine drugs that act on stress-axis receptors, s
 ### First we find drugs that indicate metabolic side-effects.
 
 ```{r}
+#| warning: false
+
 # We define the key terms
 met_terms <- c("Weight","Appetite","Metab","Glucose")
 
 # Convert it into a pattern
-met_pattern <- paste(met_terms, collapse = "|")
+met_pattern <- str_c(met_terms, collapse = "|")
 
 # And then add a collumn indicating metabolic side-effects
 metabolic_se <- df |> mutate(metab = str_detect(side_effect_PT, met_pattern))
@@ -407,6 +443,8 @@ table(metabolic_se$metab, useNA = "ifany")
 In this case, we restrict ourselves to three types of stress-axis receptors. These are glucocorticoid, mineralocorticoid and corticoid.
 
 ```{r}
+#| warning: false
+
 # Define the keys as a pattern directly
 sa_receptor_pattern <- "glucocorticoid|mineralocorticoid|corticoid"
 
@@ -422,6 +460,8 @@ table(sa_receptor_metabolic_se$sa_target, useNA = "ifany")
 ### Finally we create the plot
 
 ```{r}
+#| warning: false
+
 # Create the plot
 sa_receptor_metabolic_se |>
   group_by(sa_target) |>
@@ -457,6 +497,8 @@ ggsave("../results/Analysis1.2_Metabolic.png", plot = last_plot(),
 ```
 
 ```{r}
+#| warning: false
+
 # Calculate and print the exact bar heights
 bar_heights <- sa_receptor_metabolic_se |>
   group_by(sa_target) |>
