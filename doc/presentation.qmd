@@ -99,7 +99,7 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 
 3: We can see what receptors often light up and give the common side effects
 
-##
+## 
 
 ### Analysis 1 Part 2 - Nuance into Side-Effect Correlations
 
@@ -112,7 +112,6 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 :::
 
 In this part of the first analysis, we find direct links between drug targets and their side-effects!
-
 
 ## 
 
@@ -155,15 +154,16 @@ Rules:
 ::: {.column width="25%"}
 ![LogP Density](presentation_files/figures/Analysis2_LogP_density.png)
 :::
-
+::: {.column width="50%"}
 1: More than 90% of molecules have ≤ 5 HBD and ≤ 10 HBA.
 
 2: So only less than 10% do not follow the rule for HBD and HBA.
+:::
+::: {.column width="50%"}
+3: 0 and 600 MW and -0.5 and 0.1 logP
 
-3: Almost all molecules sit between 0 and 600 MW and between -0.5 and 0.1 for the LogP (cLogP) values.
-
-4: Most molecules in the dataset break the Lipinski rules for the MW and LogP values.
-
+4: Most molecules in the dataset break the Lipinski rules.
+:::
 ## 
 
 ### State of pharmaceuitcal products
