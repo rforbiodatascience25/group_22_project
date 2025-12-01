@@ -158,6 +158,12 @@ Rules:
 ::: {.column width="25%"}
 ![LogP Density](presentation_files/figures/Analysis2_LogP_density.png)
 :::
+
+::: {style="font-size: 0.8em;"}
+No correlation was found between rules and number of side effects.
+
+:::
+
 ::: {.column width="50%"}
 ::: {style="font-size: 0.8em;"}
 1: More than 90% of molecules have ≤ 5 HBD and ≤ 10 HBA.
