@@ -153,4 +153,6 @@ Rules:
 
 ### State of pharmaceuitcal products
 
-![Legality and Lipinski Rule](presentation_files/figures/Analysis2_Lipinski_Legal.png)
+![Legality and Lipinski Rule](presentation_files/figures/Analysis2_Lipinski_Legal.png){width="100%"}
+
+Most of the dataset was composed of approved and investigational drugs, with investigational drugs showing the highest percentage of Lipinski rule failures about one-third
