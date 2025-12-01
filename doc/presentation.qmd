@@ -53,7 +53,7 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 
 ## Data Handling Workflow
 
-![](presentation_files/figures/Process Diagram Graph_3.png){width="100%"}
+![](presentation_files/figures/Process%20Diagram%20Graph_3.png){width="100%"}
 
 ## 
 
@@ -79,7 +79,7 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 
 ## 
 
-### Analysis 1 - Co-occurrence Patterns
+### Analysis 1 Part 1 - Co-occurrence Patterns
 
 ::: {.column width="33%"}
 ![Indications vs. SE (counts)](presentation_files/figures/Analysis1_co_occ_indic.png)
@@ -98,6 +98,21 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 2: Breast cancer has low co-occ but higher frequencies
 
 3: We can see what receptors often light up and give the common side effects
+
+##
+
+### Analysis 1 Part 2 - Nuance into Side-Effect Correlations
+
+::: {.column width="50%"}
+![](presentation_files/figures/Analysis1.2_Endocrine.png)
+:::
+
+::: {.column width="50%"}
+![](presentation_files/figures/Analysis1.2_Metabolic.png)
+:::
+
+In this part of the first analysis, we find direct links between drug targets and their side-effects!
+
 
 ## 
 
