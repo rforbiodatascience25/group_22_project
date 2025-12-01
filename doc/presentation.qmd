@@ -51,6 +51,10 @@ The project integrates two major data sources, **SIDER** and **DrugBank**.
 
 ![](presentation_files/figures/Description_violin_plot.png){width="50%"}
 
+## Data Handling Workflow
+
+![](presentation_files/figures/Process Diagram Graph_3.png){width="100%"}
+
 ## 
 
 ### Analysis 1 - Correlations
@@ -136,6 +140,14 @@ Rules:
 ::: {.column width="25%"}
 ![LogP Density](presentation_files/figures/Analysis2_LogP_density.png)
 :::
+
+1: More than 90% of molecules have ≤ 5 HBD and ≤ 10 HBA.
+
+2: So only less than 10% do not follow the rule for HBD and HBA.
+
+3: Almost all molecules sit between 0 and 600 MW and between -0.5 and 0.1 for the LogP (cLogP) values.
+
+4: Most molecules in the dataset break the Lipinski rules for the MW and LogP values.
 
 ## 
 
