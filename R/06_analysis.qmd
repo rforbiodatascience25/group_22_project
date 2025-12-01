@@ -129,71 +129,102 @@ print(logp_density)
 
 ```{r}
 # HBD vs side-effect burden
+# HBD vs side-effect burden
+cor_hbd <- cor(df_drug$hbd, df_drug$side_effect_burden, use = "complete.obs")
 hbd_burden <- df_drug |>
-  ggplot(aes(x = hbd,
-             y = side_effect_burden)) +
+  ggplot(aes(x = hbd, y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
-  theme_bw() +
-  labs(x = "H-bond donors (HBD)",
-       y = "Number of Side Effects")
-ggsave(str_c(results_path,"Analysis2_HBD_SE.png"), plot = hbd_burden, 
+  geom_smooth(method = "lm", color = "red") +
+  labs(
+    x = "H-bond donors (HBD)",
+    y = "Number of Side Effects",
+    title = "HBD vs Side-Effect Burden",
+    subtitle = str_c("Correlation coefficient:", round(cor_hbd, 3))
+  ) +
+  theme_bw()
+ggsave(str_c(results_path,"Analysis2_HBD_SE.png"), plot = hbd_burden,
        width = 8, height = 6, dpi = 300)
 ggsave(str_c(presentation_path,"Analysis2_HBD_SE.png"), plot = hbd_burden, 
        width = 8, height = 6, dpi = 300)
 print(hbd_burden)
-# HBA vs side-effect burden
-hba_burden <- df_drug |>
-  ggplot(aes(x = hba,
-             y = side_effect_burden)) +
-  geom_point(color = "steelblue", alpha = 0.6) +
-  theme_bw() +
-  labs(x = "H-bond acceptors (HBA)",
-       y = "Number of Side Effects")
 
+
+# HBA vs side-effect burden
+# HBA vs side-effect burden
+cor_hba <- cor(df_drug$hba, df_drug$side_effect_burden, use = "complete.obs")
+hba_burden <- df_drug |>
+  ggplot(aes(x = hba, y = side_effect_burden)) +
+  geom_point(color = "steelblue", alpha = 0.6) +
+  geom_smooth(method = "lm", color = "red") +
+  labs(
+    x = "H-bond acceptors (HBA)",
+    y = "Number of Side Effects",
+    title = "HBA vs Side-Effect Burden",
+    subtitle = str_c("Correlation coefficient:", round(cor_hba, 3))
+  ) +
+  theme_bw()
 ggsave(str_c(results_path,"Analysis2_HBA_SE.png"), plot = hba_burden, 
        width = 8, height = 6, dpi = 300)
 ggsave(str_c(presentation_path,"Analysis2_HBA_SE.png"), plot = hba_burden, 
        width = 8, height = 6, dpi = 300)
 print(hba_burden)
+
 # Molecular Weight vs side-effect burden
+mcor_mw <- cor(df_drug$molecular_weight, df_drug$side_effect_burden, use = "complete.obs")
 mw_burden <- df_drug |>
-  ggplot(aes(x = molecular_weight,
-             y = side_effect_burden)) +
+  ggplot(aes(x = molecular_weight, y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
-  theme_bw() +
-  labs(x = "Molecular Weight (MW)",
-       y = "Number of Side Effects")
-ggsave(str_c(results_path,"Analysis2_MW_SE.png"), plot = mw_burden, 
+  geom_smooth(method = "lm", color = "red") +
+  labs(
+    x = "Molecular Weight (MW)",
+    y = "Number of Side Effects",
+    title = "MW vs Side-Effect Burden",
+    subtitle = str_c("Correlation coefficient:", round(cor_mw, 3))
+  ) +
+  theme_bw()
+ggsave(str_c(results_path,"Analysis2_MW_SE.png"), plot = mw_burden,
        width = 8, height = 6, dpi = 300)
-ggsave(str_c(presentation_path,"Analysis2_MW_SE.png"), plot = mw_burden, 
+ggsave(str_c(presentation_path,"Analysis2_MW_SE.png"), plot = mw_burden,
        width = 8, height = 6, dpi = 300)
 print(mw_burden)
+
 # LogP vs side-effect burden
+cor_logp <- cor(df_drug$clog_p, df_drug$side_effect_burden, use = "complete.obs")
 logp_burden <- df_drug |>
-  ggplot(aes(x = clog_p,
-             y = side_effect_burden)) +
+  ggplot(aes(x = clog_p, y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
-  theme_bw() +
-  labs(x = "LogP (ClogP)",
-       y = "Number of Side Effects")
-ggsave(str_c(results_path,"Analysis2_LogP_SE.png"), plot = logp_burden, 
-       width = 8, height = 6, dpi = 300)
-ggsave(str_c(presentation_path,"Analysis2_LogP_SE.png"), plot = logp_burden, 
-       width = 8, height = 6, dpi = 300)
+  geom_smooth(method = "lm", color = "red") +
+  labs(
+    x = "LogP (ClogP)",
+    y = "Number of Side Effects",
+    title = "LogP vs Side-Effect Burden",
+    subtitle = str_c("Correlation coefficient:", round(cor_logp, 3))
+  ) +
+  theme_bw()
+ggsave(str_c(results_path,"Analysis2_LogP_SE.png"),
+       plot = logp_burden, width = 8, height = 6, dpi = 300)
+ggsave(str_c(presentation_path,"Analysis2_LogP_SE.png"), 
+       plot = logp_burden, width = 8, height = 6, dpi = 300)
 print(logp_burden)
+
 # Lipinski rule vs side-effect burden
+cor_lipinski <- cor(as.numeric(df_drug$lipinski), df_drug$side_effect_burden, use = "complete.obs")
 lipinkski_burden <- df_drug |>
-  ggplot(aes(x = lipinski,
-             y = side_effect_burden)) +
+  ggplot(aes(x = lipinski, y = side_effect_burden)) +
   geom_boxplot(fill = "steelblue", color = "black") +
   theme_bw() +
-  labs(x = "Lipinski Rule Satisfied",
-       y = "Number of Side Effects")
-ggsave(str_c(results_path,"Analysis2_Lipinski_SE.png"), plot = last_plot(), 
+  labs(
+    x = "Lipinski Rule Satisfied",
+    y = "Number of Side Effects",
+    title = "Lipinski Rule vs Side-Effect Burden",
+    subtitle = str_c("Point-biserial correlation:", round(cor_lipinski, 3))
+  )
+ggsave(str_c(results_path,"Analysis2_Lipinski_SE.png"), plot = lipinkski_burden,
        width = 8, height = 6, dpi = 300)
-ggsave(str_c(presentation_path,"Analysis2_Lipinski_SE.png"), plot = last_plot(), 
+ggsave(str_c(presentation_path,"Analysis2_Lipinski_SE.png"), plot = lipinkski_burden, 
        width = 8, height = 6, dpi = 300)
 print(lipinkski_burden)
+
 ```
 
 ## Legality state
