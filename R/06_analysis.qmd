@@ -170,7 +170,7 @@ ggsave(str_c(presentation_path,"Analysis2_HBA_SE.png"), plot = hba_burden,
 print(hba_burden)
 
 # Molecular Weight vs side-effect burden
-mcor_mw <- cor(df_drug$molecular_weight, df_drug$side_effect_burden, use = "complete.obs")
+cor_mw <- cor(df_drug$molecular_weight, df_drug$side_effect_burden, use = "complete.obs")
 mw_burden <- df_drug |>
   ggplot(aes(x = molecular_weight, y = side_effect_burden)) +
   geom_point(color = "steelblue", alpha = 0.6) +
@@ -208,7 +208,6 @@ ggsave(str_c(presentation_path,"Analysis2_LogP_SE.png"),
 print(logp_burden)
 
 # Lipinski rule vs side-effect burden
-cor_lipinski <- cor(as.numeric(df_drug$lipinski), df_drug$side_effect_burden, use = "complete.obs")
 lipinkski_burden <- df_drug |>
   ggplot(aes(x = lipinski, y = side_effect_burden)) +
   geom_boxplot(fill = "steelblue", color = "black") +
@@ -217,7 +216,6 @@ lipinkski_burden <- df_drug |>
     x = "Lipinski Rule Satisfied",
     y = "Number of Side Effects",
     title = "Lipinski Rule vs Side-Effect Burden",
-    subtitle = str_c("Point-biserial correlation:", round(cor_lipinski, 3))
   )
 ggsave(str_c(results_path,"Analysis2_Lipinski_SE.png"), plot = lipinkski_burden,
        width = 8, height = 6, dpi = 300)

@@ -3196,7 +3196,7 @@ lgl (1): lipinski
 <li><p>HBD (Hydrogen Bond Donors): the number of hydrogen atoms in the molecule that can donate a hydrogen bond (typically –OH and –NH groups).</p></li>
 <li><p>HBA (Hydrogen Bond Acceptors): the number of atoms in the molecule that can accept a hydrogen bond (typically O, N, S atoms with lone pairs).</p></li>
 <li><p>Clog P: the calculated logarithm of the partition coefficient (P) between octanol and water; a measure of the compound’s lipophilicity.</p></li>
-<li><p>Lipinski: whether the molecule follows Lipinski’s Rule of Five (only 4 rules though) (MW ≤ 500, Clog P ≤ 5, HBD ≤ 5, HBA ≤ 10), indicating good likelihood of oral bioavailability.</p></li>
+<li><p>Lipinski: whether the molecule follows Lipinski’s Rule of Five (MW ≤ 500, Clog P ≤ 5, HBD ≤ 5, HBA ≤ 10), indicating good likelihood of oral bioavailability.</p></li>
 <li><p>side_effect_PT: what side effects are listed with a certain drug</p></li>
 <li><p>Freq_text: what different frequencies were reported with a certain side effect, if any</p></li>
 <li><p>Freq_lower: lower bound freq</p></li>
@@ -3265,7 +3265,7 @@ lgl (1): lipinski
 <span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
 <span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span>
 <span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">paste0</span>(results_path,<span class="st">&quot;Description_violin_plot.png&quot;</span>), <span class="at">plot =</span> <span class="fu">last_plot</span>(), </span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">str_c</span>(results_path,<span class="st">&quot;Description_violin_plot.png&quot;</span>), <span class="at">plot =</span> <span class="fu">last_plot</span>(), </span>
 <span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
 <span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(violin_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">

@@ -3119,8 +3119,8 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="loading-cleaned-full-data">Loading cleaned, full data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">=</span> <span class="st">&quot;../data/&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sider <span class="ot">=</span> <span class="fu">read_tsv</span>(<span class="fu">paste0</span>(data_path, <span class="st">&quot;sider_full_clean.tsv&quot;</span>))</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>drugbank <span class="ot">=</span> <span class="fu">read_tsv</span>(<span class="fu">paste0</span>(data_path, <span class="st">&quot;drugbank_full_clean.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sider <span class="ot">=</span> <span class="fu">read_tsv</span>(<span class="fu">str_c</span>(data_path, <span class="st">&quot;sider_full_clean.tsv&quot;</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>drugbank <span class="ot">=</span> <span class="fu">read_tsv</span>(<span class="fu">str_c</span>(data_path, <span class="st">&quot;drugbank_full_clean.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="adding-lipinski-features-and-fixing-column-names" class="level2">
@@ -3163,7 +3163,7 @@ vertical-align: -.125em;
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">uniprot_names =</span> <span class="fu">map_chr</span>(uniprot_names, <span class="sc">~</span> <span class="fu">paste</span>(.x, <span class="at">collapse =</span> <span class="st">&quot;;&quot;</span>))</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(df, <span class="fu">paste0</span>(data_path, <span class="st">&quot;merged_data.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(df, <span class="fu">str_c</span>(data_path, <span class="st">&quot;merged_data.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 

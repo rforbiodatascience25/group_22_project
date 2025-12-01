@@ -3116,30 +3116,30 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="loading-sider-datafiles">Loading SIDER datafiles</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">=</span> <span class="st">&quot;../data/&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>raw_path <span class="ot">=</span> <span class="fu">paste0</span>(data_path, <span class="st">&quot;_raw/&quot;</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sider_path <span class="ot">=</span> <span class="fu">paste0</span>(raw_path, <span class="st">&quot;sider/&quot;</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>drugbank_path <span class="ot">=</span> <span class="fu">paste0</span>(raw_path, <span class="st">&quot;drugbank/&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>raw_path <span class="ot">=</span> <span class="fu">str_c</span>(data_path, <span class="st">&quot;_raw/&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sider_path <span class="ot">=</span> <span class="fu">str_c</span>(raw_path, <span class="st">&quot;sider/&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>drugbank_path <span class="ot">=</span> <span class="fu">str_c</span>(raw_path, <span class="st">&quot;drugbank/&quot;</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load side effects (meddra_all_se)</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sider_se <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(data_path,<span class="st">&quot;sider_se.tsv&quot;</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(data_path,<span class="st">&quot;sider_se.tsv&quot;</span>))</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Load frequency data (meddra_freq)</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>sider_freq <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(data_path,<span class="st">&quot;sider_freq.tsv&quot;</span>))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(data_path,<span class="st">&quot;sider_freq.tsv&quot;</span>))</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Load indications (meddra_all_indications)</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>sider_indications <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(data_path,<span class="st">&quot;sider_indications.tsv&quot;</span>))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(data_path,<span class="st">&quot;sider_indications.tsv&quot;</span>))</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Load drug names</span></span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>drug_names <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(data_path,<span class="st">&quot;drug_names.tsv&quot;</span>))</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(data_path,<span class="st">&quot;drug_names.tsv&quot;</span>))</span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Load ATC codes</span></span>
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>drug_atc <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(data_path,<span class="st">&quot;drug_atc.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(data_path,<span class="st">&quot;drug_atc.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="merging-the-tables-of-the-sider-data-set-removing-redundant-and-unnecessary-rows" class="level2">
@@ -3166,8 +3166,8 @@ vertical-align: -.125em;
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MedDRA_concept_type =</span> <span class="fu">trimws</span>(MedDRA_concept_type)) <span class="sc">|&gt;</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(MedDRA_concept_type <span class="sc">==</span> <span class="st">&quot;PT&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_lower_num =</span> <span class="fu">suppressWarnings</span>(<span class="fu">as.numeric</span>(freq_lower)),</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_upper_num =</span> <span class="fu">suppressWarnings</span>(<span class="fu">as.numeric</span>(freq_upper))</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_lower_num =</span> <span class="fu">as.numeric</span>(freq_lower),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_upper_num =</span> <span class="fu">as.numeric</span>(freq_upper)</span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>sider_freq_agg <span class="ot">&lt;-</span> sider_freq_pt <span class="sc">|&gt;</span></span>
@@ -3176,56 +3176,60 @@ vertical-align: -.125em;
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">placebo =</span> {</span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>      vals <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">trimws</span>(placebo))</span>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      vals <span class="ot">&lt;-</span> vals[vals <span class="sc">!=</span> <span class="st">&quot;&quot;</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(vals)]</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="st">&quot;placebo&quot;</span> <span class="sc">%in%</span> vals) <span class="st">&quot;yes&quot;</span> <span class="cf">else</span> <span class="st">&quot;no&quot;</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_text =</span> <span class="fu">join_unique</span>(freq_description),</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_lower =</span> {</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>      v <span class="ot">&lt;-</span> <span class="fu">min</span>(freq_lower_num, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.infinite</span>(v)) <span class="cn">NA_real_</span> <span class="cf">else</span> v</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_upper =</span> {</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>      v <span class="ot">&lt;-</span> <span class="fu">max</span>(freq_upper_num, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.infinite</span>(v)) <span class="cn">NA_real_</span> <span class="cf">else</span> v</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Indications: keep PT only &amp; aggregate per drug</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>sider_indications_pt <span class="ot">&lt;-</span> sider_indications <span class="sc">|&gt;</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MedDRA_concept_type =</span> <span class="fu">trimws</span>(MedDRA_concept_type)) <span class="sc">|&gt;</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(MedDRA_concept_type <span class="sc">==</span> <span class="st">&quot;PT&quot;</span>)</span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>indications_agg <span class="ot">&lt;-</span> sider_indications_pt <span class="sc">|&gt;</span></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(STITCH_flat) <span class="sc">|&gt;</span></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">indication_PT =</span> <span class="fu">join_unique</span>(MedDRA_concept_name), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">case_when</span>(</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;placebo&quot;</span> <span class="sc">%in%</span> vals <span class="sc">~</span> <span class="st">&quot;yes&quot;</span>,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;no&quot;</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_text =</span> <span class="fu">join_unique</span>(freq_description),</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_lower =</span> {</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>      v <span class="ot">&lt;-</span> <span class="fu">min</span>(freq_lower_num, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.infinite</span>(v)) <span class="cn">NA_real_</span> <span class="cf">else</span> v</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">freq_upper =</span> {</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>      v <span class="ot">&lt;-</span> <span class="fu">max</span>(freq_upper_num, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.infinite</span>(v)) <span class="cn">NA_real_</span> <span class="cf">else</span> v</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Indications: keep PT only &amp; aggregate per drug</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>sider_indications_pt <span class="ot">&lt;-</span> sider_indications <span class="sc">|&gt;</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MedDRA_concept_type =</span> <span class="fu">trimws</span>(MedDRA_concept_type)) <span class="sc">|&gt;</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(MedDRA_concept_type <span class="sc">==</span> <span class="st">&quot;PT&quot;</span>)</span>
 <span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine everything into the master table</span></span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>drug_complete <span class="ot">&lt;-</span> sider_se_pt <span class="sc">|&gt;</span></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(sider_freq_agg,    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;STITCH_flat&quot;</span>, <span class="st">&quot;UMLS_MedDRA&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(indications_agg,   <span class="at">by =</span> <span class="st">&quot;STITCH_flat&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(drug_names_agg,    <span class="at">by =</span> <span class="st">&quot;STITCH_flat&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(drug_atc_agg,      <span class="at">by =</span> <span class="st">&quot;STITCH_flat&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    STITCH_flat,</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    drug_name,</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    ATC,</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    UMLS_MedDRA,</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    side_effect_PT,</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    placebo,</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    freq_text,</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    freq_lower,</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    freq_upper,</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    indication_PT</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>drug_complete <span class="ot">&lt;-</span> drug_complete <span class="sc">|&gt;</span></span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">&quot;STITCH_flat&quot;</span>, <span class="sc">-</span><span class="st">&quot;ATC&quot;</span>, <span class="sc">-</span><span class="st">&quot;UMLS_MedDRA&quot;</span>, <span class="sc">-</span><span class="st">&quot;placebo&quot;</span>)</span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect</span></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>drug_complete</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>indications_agg <span class="ot">&lt;-</span> sider_indications_pt <span class="sc">|&gt;</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(STITCH_flat) <span class="sc">|&gt;</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">indication_PT =</span> <span class="fu">join_unique</span>(MedDRA_concept_name), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine everything into the master table</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>drug_complete <span class="ot">&lt;-</span> sider_se_pt <span class="sc">|&gt;</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(sider_freq_agg,    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;STITCH_flat&quot;</span>, <span class="st">&quot;UMLS_MedDRA&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(indications_agg,   <span class="at">by =</span> <span class="st">&quot;STITCH_flat&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(drug_names_agg,    <span class="at">by =</span> <span class="st">&quot;STITCH_flat&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(drug_atc_agg,      <span class="at">by =</span> <span class="st">&quot;STITCH_flat&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    STITCH_flat,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    drug_name,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    ATC,</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    UMLS_MedDRA,</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    side_effect_PT,</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    placebo,</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    freq_text,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    freq_lower,</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    freq_upper,</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    indication_PT</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>drug_complete <span class="ot">&lt;-</span> drug_complete <span class="sc">|&gt;</span></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">&quot;STITCH_flat&quot;</span>, <span class="sc">-</span><span class="st">&quot;ATC&quot;</span>, <span class="sc">-</span><span class="st">&quot;UMLS_MedDRA&quot;</span>, <span class="sc">-</span><span class="st">&quot;placebo&quot;</span>)</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>drug_complete</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 145,321 × 6
    drug_name side_effect_PT        freq_text freq_lower freq_upper indication_PT
@@ -3247,15 +3251,15 @@ vertical-align: -.125em;
 <section id="saving-the-sider-data-set-to-a-local-file" class="level2">
 <h2 class="anchored" data-anchor-id="saving-the-sider-data-set-to-a-local-file">Saving the SIDER data set to a local file</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(drug_complete, <span class="fu">paste0</span>(data_path,<span class="st">&quot;sider_full_clean.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(drug_complete, <span class="fu">str_c</span>(data_path,<span class="st">&quot;sider_full_clean.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="loading-drugbank-datasets" class="level2">
 <h2 class="anchored" data-anchor-id="loading-drugbank-datasets">Loading Drugbank datasets</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="fu">paste0</span>(data_path,<span class="st">&quot;drugbank_vocabulary.tsv&quot;</span>))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>structures <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="fu">paste0</span>(data_path,<span class="st">&quot;drugbank_structures.tsv&quot;</span>))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="fu">paste0</span>(data_path,<span class="st">&quot;drugbank_targets.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="fu">str_c</span>(data_path,<span class="st">&quot;drugbank_vocabulary.tsv&quot;</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>structures <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="fu">str_c</span>(data_path,<span class="st">&quot;drugbank_structures.tsv&quot;</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="fu">str_c</span>(data_path,<span class="st">&quot;drugbank_targets.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="cleaning-and-merging-the-drugbank-datasets" class="level2">
@@ -3309,9 +3313,16 @@ vertical-align: -.125em;
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(targets, <span class="at">by =</span> <span class="st">&quot;drugbank_id&quot;</span>)</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#remove all duplicated collums</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>drugbank_merged <span class="ot">&lt;-</span> <span class="fu">select</span>(drugbank_merged, <span class="sc">-</span><span class="st">&quot;cas.x&quot;</span>, <span class="sc">-</span><span class="st">&quot;cas.y&quot;</span>, <span class="sc">-</span><span class="st">&quot;inchikey&quot;</span>, <span class="sc">-</span><span class="st">&quot;name.x&quot;</span>, <span class="sc">-</span><span class="st">&quot;name.y&quot;</span>, <span class="sc">-</span><span class="st">&quot;synonyms&quot;</span>, <span class="sc">-</span><span class="st">&quot;inchi&quot;</span>, <span class="sc">-</span><span class="st">&quot;standard_inchi_key&quot;</span>, <span class="sc">-</span><span class="st">&quot;accession_numbers&quot;</span>, <span class="sc">-</span><span class="st">&quot;unii&quot;</span>, <span class="sc">-</span><span class="st">&quot;kegg_compound_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;kegg_drug_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;pubchem_compound_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;pubchem_substance_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;chebi_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;ChEMBL ID&quot;</span>, <span class="sc">-</span><span class="st">&quot;het_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;chemspider_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;bindingdb_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;uniprot_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;type&quot;</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>drugbank_merged</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>drugbank_merged <span class="ot">&lt;-</span> <span class="fu">select</span>(drugbank_merged, <span class="sc">-</span><span class="st">&quot;cas.x&quot;</span>, <span class="sc">-</span><span class="st">&quot;cas.y&quot;</span>, <span class="sc">-</span><span class="st">&quot;inchikey&quot;</span>, </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">-</span><span class="st">&quot;name.x&quot;</span>, <span class="sc">-</span><span class="st">&quot;name.y&quot;</span>, <span class="sc">-</span><span class="st">&quot;synonyms&quot;</span>, <span class="sc">-</span><span class="st">&quot;inchi&quot;</span>, </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">-</span><span class="st">&quot;standard_inchi_key&quot;</span>, <span class="sc">-</span><span class="st">&quot;accession_numbers&quot;</span>, <span class="sc">-</span><span class="st">&quot;unii&quot;</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">-</span><span class="st">&quot;kegg_compound_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;kegg_drug_id&quot;</span>, </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">-</span><span class="st">&quot;pubchem_compound_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;pubchem_substance_id&quot;</span>, </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">-</span><span class="st">&quot;chebi_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;ChEMBL ID&quot;</span>, <span class="sc">-</span><span class="st">&quot;het_id&quot;</span>, </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">-</span><span class="st">&quot;chemspider_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;bindingdb_id&quot;</span>, <span class="sc">-</span><span class="st">&quot;uniprot_id&quot;</span>, </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">-</span><span class="st">&quot;type&quot;</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>drugbank_merged</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 25,076 × 6
    drugbank_id common_name  drug_groups              smiles formula uniprot_name
@@ -3333,7 +3344,7 @@ vertical-align: -.125em;
 <section id="exporting-drugbank-data" class="level2">
 <h2 class="anchored" data-anchor-id="exporting-drugbank-data">Exporting Drugbank Data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(drugbank_merged, <span class="fu">paste0</span>(data_path,<span class="st">&quot;drugbank_full_clean.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(drugbank_merged, <span class="fu">str_c</span>(data_path,<span class="st">&quot;drugbank_full_clean.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 

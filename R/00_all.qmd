@@ -10,7 +10,6 @@ editor: visual
 #| warning: false
 #| error: false
 #| message: true
-#| output_dir: "../R/"
 library(quarto)
 library(knitr)
 source("99_proj_func.R")

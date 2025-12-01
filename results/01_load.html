@@ -3119,9 +3119,9 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SIDER base URL</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>base_url <span class="ot">&lt;-</span> <span class="st">&quot;http://sideeffects.embl.de/media/download/&quot;</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">=</span> <span class="st">&quot;../data/&quot;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>raw_path <span class="ot">=</span> <span class="fu">paste0</span>(data_path, <span class="st">&quot;_raw/&quot;</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>sider_path <span class="ot">=</span> <span class="fu">paste0</span>(raw_path, <span class="st">&quot;sider/&quot;</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>drugbank_path <span class="ot">=</span> <span class="fu">paste0</span>(raw_path, <span class="st">&quot;drugbank/&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>raw_path <span class="ot">=</span> <span class="fu">str_c</span>(data_path, <span class="st">&quot;_raw/&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>sider_path <span class="ot">=</span> <span class="fu">str_c</span>(raw_path, <span class="st">&quot;sider/&quot;</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>drugbank_path <span class="ot">=</span> <span class="fu">str_c</span>(raw_path, <span class="st">&quot;drugbank/&quot;</span>)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create directory for SIDER data</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(sider_path, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
@@ -3139,7 +3139,7 @@ vertical-align: -.125em;
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Downloading</span></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>files <span class="sc">|&gt;</span> <span class="fu">walk</span>(<span class="sc">~</span></span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">curl_download</span>(</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(base_url, .x),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(base_url, .x),</span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">file.path</span>(sider_path, .x),</span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">quiet =</span> <span class="cn">TRUE</span></span>
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  )</span>
@@ -3151,7 +3151,7 @@ vertical-align: -.125em;
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load side effects (meddra_all_se)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sider_se <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(sider_path,<span class="st">&quot;meddra_all_se.tsv.gz&quot;</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(sider_path,<span class="st">&quot;meddra_all_se.tsv.gz&quot;</span>),</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">&quot;STITCH_flat&quot;</span>, <span class="st">&quot;STITCH_stereo&quot;</span>,</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;UMLS_CUI_label&quot;</span>, <span class="st">&quot;MedDRA_concept_type&quot;</span>,</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;UMLS_MedDRA&quot;</span>, <span class="st">&quot;side_effect&quot;</span>),</span>
@@ -3160,7 +3160,7 @@ vertical-align: -.125em;
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Load frequency data (meddra_freq)</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>sider_freq <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(sider_path,<span class="st">&quot;meddra_freq.tsv.gz&quot;</span>),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(sider_path,<span class="st">&quot;meddra_freq.tsv.gz&quot;</span>),</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">&quot;STITCH_flat&quot;</span>, <span class="st">&quot;STITCH_stereo&quot;</span>,</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;UMLS_CUI_label&quot;</span>, <span class="st">&quot;placebo&quot;</span>,</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;freq_description&quot;</span>, <span class="st">&quot;freq_lower&quot;</span>, <span class="st">&quot;freq_upper&quot;</span>,</span>
@@ -3170,7 +3170,7 @@ vertical-align: -.125em;
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Load indications (meddra_all_indications)</span></span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>sider_indications <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(sider_path,<span class="st">&quot;meddra_all_indications.tsv.gz&quot;</span>),</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(sider_path,<span class="st">&quot;meddra_all_indications.tsv.gz&quot;</span>),</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">&quot;STITCH_flat&quot;</span>, <span class="st">&quot;UMLS_CUI_label&quot;</span>,</span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;method_of_detection&quot;</span>, <span class="st">&quot;concept_name&quot;</span>,</span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;MedDRA_concept_type&quot;</span>, <span class="st">&quot;UMLS_MedDRA&quot;</span>,</span>
@@ -3180,7 +3180,7 @@ vertical-align: -.125em;
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Load drug names</span></span>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>drug_names <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(sider_path,<span class="st">&quot;drug_names.tsv&quot;</span>),</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(sider_path,<span class="st">&quot;drug_names.tsv&quot;</span>),</span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">&quot;STITCH_flat&quot;</span>, <span class="st">&quot;drug_name&quot;</span>),</span>
 <span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">cols</span>()</span>
 <span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -3188,7 +3188,7 @@ vertical-align: -.125em;
 <span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Load ATC codes</span></span>
 <span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>drug_atc <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(sider_path,<span class="st">&quot;drug_atc.tsv&quot;</span>),</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(sider_path,<span class="st">&quot;drug_atc.tsv&quot;</span>),</span>
 <span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">&quot;STITCH_flat&quot;</span>, <span class="st">&quot;ATC_code&quot;</span>),</span>
 <span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">cols</span>()</span>
 <span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3197,11 +3197,11 @@ vertical-align: -.125em;
 <section id="saving-sider-data" class="level2">
 <h2 class="anchored" data-anchor-id="saving-sider-data">Saving SIDER data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(sider_se, <span class="fu">paste0</span>(data_path,<span class="st">&quot;sider_se.tsv&quot;</span>))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(sider_freq, <span class="fu">paste0</span>(data_path,<span class="st">&quot;sider_freq.tsv&quot;</span>))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(sider_indications, <span class="fu">paste0</span>(data_path,<span class="st">&quot;sider_indications.tsv&quot;</span>))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(drug_names, <span class="fu">paste0</span>(data_path,<span class="st">&quot;drug_names.tsv&quot;</span>))</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(drug_atc, <span class="fu">paste0</span>(data_path,<span class="st">&quot;drug_atc.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(sider_se, <span class="fu">str_c</span>(data_path,<span class="st">&quot;sider_se.tsv&quot;</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(sider_freq, <span class="fu">str_c</span>(data_path,<span class="st">&quot;sider_freq.tsv&quot;</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(sider_indications, <span class="fu">str_c</span>(data_path,<span class="st">&quot;sider_indications.tsv&quot;</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(drug_names, <span class="fu">str_c</span>(data_path,<span class="st">&quot;drug_names.tsv&quot;</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(drug_atc, <span class="fu">str_c</span>(data_path,<span class="st">&quot;drug_atc.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="downloading-the-drugbank-data-set" class="level2">
@@ -3220,11 +3220,11 @@ vertical-align: -.125em;
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links&quot;</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>zip_paths <span class="ot">&lt;-</span> <span class="fu">file.path</span>(drugbank_path, <span class="fu">paste0</span>(<span class="st">&quot;drugbank_&quot;</span>, <span class="fu">names</span>(urls), <span class="st">&quot;.zip&quot;</span>))</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>zip_paths <span class="ot">&lt;-</span> <span class="fu">file.path</span>(drugbank_path, <span class="fu">str_c</span>(<span class="st">&quot;drugbank_&quot;</span>, <span class="fu">names</span>(urls), <span class="st">&quot;.zip&quot;</span>))</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Credentials</span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>user <span class="ot">&lt;-</span> <span class="st">&quot;s243161@dtu.dk&quot;</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>password <span class="ot">&lt;-</span> <span class="st">&quot;&amp;5O&amp;w6inYYPc^&quot;</span>           <span class="co">#Remove this later</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>password <span class="ot">&lt;-</span> <span class="st">&quot;&amp;5O&amp;w6inYYPc^&quot;</span>           </span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Download</span></span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(</span>
@@ -3234,7 +3234,7 @@ vertical-align: -.125em;
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">url =</span> .x,</span>
 <span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">destfile =</span> .y,</span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">quiet =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">handle =</span> <span class="fu">new_handle</span>(<span class="at">userpwd =</span> <span class="fu">paste0</span>(user, <span class="st">&quot;:&quot;</span>, password))</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">handle =</span> <span class="fu">new_handle</span>(<span class="at">userpwd =</span> <span class="fu">str_c</span>(user, <span class="st">&quot;:&quot;</span>, password))</span>
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
@@ -3246,17 +3246,17 @@ vertical-align: -.125em;
 <span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.remove</span>() <span class="sc">|&gt;</span></span>
 <span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>()</span>
 <span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">paste0</span>(drugbank_path,<span class="st">&quot;drugbank vocabulary.csv&quot;</span>))</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>structures <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">paste0</span>(drugbank_path,<span class="st">&quot;structure links.csv&quot;</span>))</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">paste0</span>(drugbank_path,<span class="st">&quot;uniprot links.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">str_c</span>(drugbank_path,<span class="st">&quot;drugbank vocabulary.csv&quot;</span>))</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>structures <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">str_c</span>(drugbank_path,<span class="st">&quot;structure links.csv&quot;</span>))</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">str_c</span>(drugbank_path,<span class="st">&quot;uniprot links.csv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="saving-drugbank-datasets" class="level2">
 <h2 class="anchored" data-anchor-id="saving-drugbank-datasets">Saving Drugbank datasets</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(vocabulary, <span class="fu">paste0</span>(data_path,<span class="st">&quot;drugbank_vocabulary.tsv&quot;</span>))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(structures, <span class="fu">paste0</span>(data_path,<span class="st">&quot;drugbank_structures.tsv&quot;</span>))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(targets, <span class="fu">paste0</span>(data_path,<span class="st">&quot;drugbank_targets.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(vocabulary, <span class="fu">str_c</span>(data_path,<span class="st">&quot;drugbank_vocabulary.tsv&quot;</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(structures, <span class="fu">str_c</span>(data_path,<span class="st">&quot;drugbank_structures.tsv&quot;</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(targets, <span class="fu">str_c</span>(data_path,<span class="st">&quot;drugbank_targets.tsv&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="check-if-results-folder-exists-otherwise-create-it" class="level3">
 <h3 class="anchored" data-anchor-id="check-if-results-folder-exists-otherwise-create-it">Check if results folder exists otherwise create it</h3>
