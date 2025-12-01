@@ -19,10 +19,9 @@ count_hbd <- function(smi) {
 
 count_hba <- function(smiles) {
 
-  n_count <- stringr::str_count(smiles, "N|n")
+  n_count <- str_count(smiles, "N|n")
 
-
-  o_count <- stringr::str_count(smiles, "O")
+  o_count <- str_count(smiles, "O|o")
 
   n_count + o_count
 }
@@ -37,7 +36,6 @@ calc_clogp <- function(smiles) {
     convert.implicit.to.explicit(mol)
   }, error = function(e) return(NA_real_))
 
-  # Direct descriptor evaluation
   out <- tryCatch(
     eval.desc(
       mol,

@@ -25,7 +25,7 @@ presentation_path = "..doc/presentation_files/figures/"
 df <- read_tsv(str_c(data_path, "merged_data.tsv"))
 ```
 
-## **Combine all side-effect for each drug into a single row**
+## Combine all side-effect for each drug into a single row
 
 ```{r}
 df_drug <- df |>
@@ -62,11 +62,11 @@ hbd_hist <- df_drug |>
   labs(x = "H-bond donors (HBD)",
        y = "Percentage (%)")
 
-ggsave(str_c(results_path,"Analysis2_HBD_count.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_HBD_count.png"), plot = hbd_hist, 
        width = 8, height = 6, dpi = 300)
-ggsave(str_c(presentation_path,"Analysis2_HBD_count.png"), plot = last_plot(), 
+ggsave(str_c(presentation_path,"Analysis2_HBD_count.png"), plot = hbd_hist, 
        width = 8, height = 6, dpi = 300)
-hbd_hist
+print(hbd_hist)
 # Histogram for H-bond acceptors (HBA) 
 hba_hist <- df_drug |>
   ggplot(aes(x = hba,
@@ -78,11 +78,11 @@ hba_hist <- df_drug |>
   labs(x = "H-bond acceptors (HBA)",
        y = "Percentage (%)")
 
-ggsave(str_c(results_path,"Analysis2_HBA_count.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_HBA_count.png"), plot = hba_hist, 
        width = 8, height = 6, dpi = 300)
-ggsave(str_c(presentation_path,"Analysis2_HBA_count.png"), plot = last_plot(), 
+ggsave(str_c(presentation_path,"Analysis2_HBA_count.png"), plot = hba_hist, 
        width = 8, height = 6, dpi = 300)
-hba_hist
+print(hba_hist)
 # Bar plot for Lipinski rule compliance as percentage
 lipinski_bar <- df_drug |>
   ggplot(aes(x = lipinski,
@@ -93,10 +93,10 @@ lipinski_bar <- df_drug |>
   labs(x = "Lipinski rule satisfied",
        y = "Percentage (%)")
 
-ggsave(str_c(results_path,"Analysis2_Lipinski_percent.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_Lipinski_percent.png"), plot = lipinski_bar, 
        width = 8, height = 6, dpi = 300)
 
-lipinski_bar
+print(lipinski_bar)
 # Density plot for Molecular Weight (MW)
 mw_density <- df_drug |>
   ggplot(aes(x = molecular_weight)) +
@@ -105,11 +105,11 @@ mw_density <- df_drug |>
   theme_bw() +
   labs(x = "Molecular Weight (MW)",
        y = "Density")
-ggsave(str_c(results_path,"Analysis2_MW_density.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_MW_density.png"), plot = mw_density, 
        width = 8, height = 6, dpi = 300)
-ggsave(str_c(presentation_path,"Analysis2_MW_density.png"), plot = last_plot(), 
+ggsave(str_c(presentation_path,"Analysis2_MW_density.png"), plot = mw_density, 
        width = 8, height = 6, dpi = 300)
-mw_density
+print(mw_density)
 # Density plot for LogP (ClogP)
 logp_density <- df_drug |>
   ggplot(aes(x = clog_p)) +
@@ -118,17 +118,16 @@ logp_density <- df_drug |>
   theme_bw() +
   labs(x = "LogP (ClogP)",
        y = "Density")
-ggsave(str_c(results_path,"Analysis2_LogP_density.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_LogP_density.png"), plot = logp_density, 
        width = 8, height = 6, dpi = 300)
-ggsave(str_c(presentation_path,"Analysis2_LogP_density.png"), plot = last_plot(), 
+ggsave(str_c(presentation_path,"Analysis2_LogP_density.png"), plot = logp_density, 
        width = 8, height = 6, dpi = 300)
-logp_density
+print(logp_density)
 ```
 
 ## Correlation plots with side-effect burden
 
 ```{r}
-
 # HBD vs side-effect burden
 hbd_burden <- df_drug |>
   ggplot(aes(x = hbd,
@@ -137,9 +136,11 @@ hbd_burden <- df_drug |>
   theme_bw() +
   labs(x = "H-bond donors (HBD)",
        y = "Number of Side Effects")
-ggsave(str_c(results_path,"Analysis2_HBD_SE.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_HBD_SE.png"), plot = hbd_burden, 
        width = 8, height = 6, dpi = 300)
-hbd_burden
+ggsave(str_c(presentation_path,"Analysis2_HBD_SE.png"), plot = hbd_burden, 
+       width = 8, height = 6, dpi = 300)
+print(hbd_burden)
 # HBA vs side-effect burden
 hba_burden <- df_drug |>
   ggplot(aes(x = hba,
@@ -149,9 +150,11 @@ hba_burden <- df_drug |>
   labs(x = "H-bond acceptors (HBA)",
        y = "Number of Side Effects")
 
-ggsave(str_c(results_path,"Analysis2_HBA_SE.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_HBA_SE.png"), plot = hba_burden, 
        width = 8, height = 6, dpi = 300)
-hba_burden
+ggsave(str_c(presentation_path,"Analysis2_HBA_SE.png"), plot = hba_burden, 
+       width = 8, height = 6, dpi = 300)
+print(hba_burden)
 # Molecular Weight vs side-effect burden
 mw_burden <- df_drug |>
   ggplot(aes(x = molecular_weight,
@@ -160,9 +163,11 @@ mw_burden <- df_drug |>
   theme_bw() +
   labs(x = "Molecular Weight (MW)",
        y = "Number of Side Effects")
-ggsave(str_c(results_path,"Analysis2_MW_SE.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_MW_SE.png"), plot = mw_burden, 
        width = 8, height = 6, dpi = 300)
-mw_burden
+ggsave(str_c(presentation_path,"Analysis2_MW_SE.png"), plot = mw_burden, 
+       width = 8, height = 6, dpi = 300)
+print(mw_burden)
 # LogP vs side-effect burden
 logp_burden <- df_drug |>
   ggplot(aes(x = clog_p,
@@ -171,10 +176,11 @@ logp_burden <- df_drug |>
   theme_bw() +
   labs(x = "LogP (ClogP)",
        y = "Number of Side Effects")
-ggsave(str_c(results_path,"Analysis2_LogP_SE.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_LogP_SE.png"), plot = logp_burden, 
        width = 8, height = 6, dpi = 300)
-
-logp_burden
+ggsave(str_c(presentation_path,"Analysis2_LogP_SE.png"), plot = logp_burden, 
+       width = 8, height = 6, dpi = 300)
+print(logp_burden)
 # Lipinski rule vs side-effect burden
 lipinkski_burden <- df_drug |>
   ggplot(aes(x = lipinski,
@@ -187,7 +193,7 @@ ggsave(str_c(results_path,"Analysis2_Lipinski_SE.png"), plot = last_plot(),
        width = 8, height = 6, dpi = 300)
 ggsave(str_c(presentation_path,"Analysis2_Lipinski_SE.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
-lipinkski_burden
+print(lipinkski_burden)
 ```
 
 ## Legality state
@@ -214,9 +220,9 @@ legal_plot <- ggplot(df_counts,
        fill = "Lipinski Rule") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-ggsave(str_c(results_path,"Analysis2_Lipinski_Legal.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Analysis2_Lipinski_Legal.png"), plot = legal_plot, 
        width = 8, height = 6, dpi = 300)
-ggsave(str_c(presentation_path,"Analysis2_Lipinski_Legal.png"), plot = last_plot(), 
+ggsave(str_c(presentation_path,"Analysis2_Lipinski_Legal.png"), plot = legal_plot, 
        width = 8, height = 6, dpi = 300)
-legal_plot
+print(legal_plot)
 ```
