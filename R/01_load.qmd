@@ -30,9 +30,9 @@ source("99_proj_func.R")
 # SIDER base URL
 base_url <- "http://sideeffects.embl.de/media/download/"
 data_path = "../data/"
-raw_path = paste0(data_path, "_raw/")
-sider_path = paste0(raw_path, "sider/")
-drugbank_path = paste0(raw_path, "drugbank/")
+raw_path = str_c(data_path, "_raw/")
+sider_path = str_c(raw_path, "sider/")
+drugbank_path = str_c(raw_path, "drugbank/")
 
 # Create directory for SIDER data
 dir.create(sider_path, recursive = TRUE, showWarnings = FALSE)
@@ -50,7 +50,7 @@ files <- c(
 # Downloading
 files |> walk(~
   curl_download(
-    paste0(base_url, .x),
+    str_c(base_url, .x),
     file.path(sider_path, .x),
     quiet = TRUE
   )
@@ -66,7 +66,7 @@ files |> walk(~
 
 # Load side effects (meddra_all_se)
 sider_se <- read_tsv(
-  paste0(sider_path,"meddra_all_se.tsv.gz"),
+  str_c(sider_path,"meddra_all_se.tsv.gz"),
   col_names = c("STITCH_flat", "STITCH_stereo",
                 "UMLS_CUI_label", "MedDRA_concept_type",
                 "UMLS_MedDRA", "side_effect"),
@@ -75,7 +75,7 @@ sider_se <- read_tsv(
 
 # Load frequency data (meddra_freq)
 sider_freq <- read_tsv(
-  paste0(sider_path,"meddra_freq.tsv.gz"),
+  str_c(sider_path,"meddra_freq.tsv.gz"),
   col_names = c("STITCH_flat", "STITCH_stereo",
                 "UMLS_CUI_label", "placebo",
                 "freq_description", "freq_lower", "freq_upper",
@@ -85,7 +85,7 @@ sider_freq <- read_tsv(
 
 # Load indications (meddra_all_indications)
 sider_indications <- read_tsv(
-  paste0(sider_path,"meddra_all_indications.tsv.gz"),
+  str_c(sider_path,"meddra_all_indications.tsv.gz"),
   col_names = c("STITCH_flat", "UMLS_CUI_label",
                "method_of_detection", "concept_name",
                "MedDRA_concept_type", "UMLS_MedDRA",
@@ -95,7 +95,7 @@ sider_indications <- read_tsv(
 
 # Load drug names
 drug_names <- read_tsv(
-  paste0(sider_path,"drug_names.tsv"),
+  str_c(sider_path,"drug_names.tsv"),
   col_names = c("STITCH_flat", "drug_name"),
   col_types = cols()
 )
@@ -103,7 +103,7 @@ drug_names <- read_tsv(
 
 # Load ATC codes
 drug_atc <- read_tsv(
-  paste0(sider_path,"drug_atc.tsv"),
+  str_c(sider_path,"drug_atc.tsv"),
   col_names = c("STITCH_flat", "ATC_code"),
   col_types = cols()
 )
@@ -113,11 +113,11 @@ drug_atc <- read_tsv(
 ## Saving SIDER data
 
 ```{r}
-write_tsv(sider_se, paste0(data_path,"sider_se.tsv"))
-write_tsv(sider_freq, paste0(data_path,"sider_freq.tsv"))
-write_tsv(sider_indications, paste0(data_path,"sider_indications.tsv"))
-write_tsv(drug_names, paste0(data_path,"drug_names.tsv"))
-write_tsv(drug_atc, paste0(data_path,"drug_atc.tsv"))
+write_tsv(sider_se, str_c(data_path,"sider_se.tsv"))
+write_tsv(sider_freq, str_c(data_path,"sider_freq.tsv"))
+write_tsv(sider_indications, str_c(data_path,"sider_indications.tsv"))
+write_tsv(drug_names, str_c(data_path,"drug_names.tsv"))
+write_tsv(drug_atc, str_c(data_path,"drug_atc.tsv"))
 ```
 
 ## Downloading the Drugbank data set
@@ -139,11 +139,11 @@ urls <- c(
     "https://go.drugbank.com/releases/5-1-13/downloads/target-all-uniprot-links"
 )
 
-zip_paths <- file.path(drugbank_path, paste0("drugbank_", names(urls), ".zip"))
+zip_paths <- file.path(drugbank_path, str_c("drugbank_", names(urls), ".zip"))
 
 # Credentials
 user <- "s243161@dtu.dk"
-password <- "&5O&w6inYYPc^"           #Remove this later
+password <- "&5O&w6inYYPc^"           
 
 # Download
 walk2(
@@ -153,7 +153,7 @@ walk2(
       url = .x,
       destfile = .y,
       quiet = TRUE,
-      handle = new_handle(userpwd = paste0(user, ":", password))
+      handle = new_handle(userpwd = str_c(user, ":", password))
     )
 )
 
@@ -165,17 +165,17 @@ zip_paths |>
   file.remove() |>
   invisible()
 
-vocabulary <- read_csv(paste0(drugbank_path,"drugbank vocabulary.csv"))
-structures <- read_csv(paste0(drugbank_path,"structure links.csv"))
-targets <- read_csv(paste0(drugbank_path,"uniprot links.csv"))
+vocabulary <- read_csv(str_c(drugbank_path,"drugbank vocabulary.csv"))
+structures <- read_csv(str_c(drugbank_path,"structure links.csv"))
+targets <- read_csv(str_c(drugbank_path,"uniprot links.csv"))
 ```
 
 ## Saving Drugbank datasets
 
 ```{r}
-write_tsv(vocabulary, paste0(data_path,"drugbank_vocabulary.tsv"))
-write_tsv(structures, paste0(data_path,"drugbank_structures.tsv"))
-write_tsv(targets, paste0(data_path,"drugbank_targets.tsv"))
+write_tsv(vocabulary, str_c(data_path,"drugbank_vocabulary.tsv"))
+write_tsv(structures, str_c(data_path,"drugbank_structures.tsv"))
+write_tsv(targets, str_c(data_path,"drugbank_targets.tsv"))
 ```
 
 ### Check if results folder exists otherwise create it

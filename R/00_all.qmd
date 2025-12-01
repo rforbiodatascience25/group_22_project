@@ -18,30 +18,30 @@ results_path <-  "../results/"
 r_path <-  "../R/"
 
 #Long runtime, 20-30 minutes
-knit(paste0(r_path,"01_load.qmd"), output = tempfile(fileext = ".md"))
-knit(paste0(r_path,"02_clean.qmd"), output = tempfile(fileext = ".md"))
-knit(paste0(r_path,"03_augment.qmd"), output = tempfile(fileext = ".md"))
-knit(paste0(r_path,"04_describe.qmd"), output = tempfile(fileext = ".md"))
-knit(paste0(r_path,"05_analysis.qmd"), output = tempfile(fileext = ".md"))
-knit(paste0(r_path,"06_analysis.qmd"), output = tempfile(fileext = ".md"))
+knit(str_c(r_path,"01_load.qmd"), output = tempfile(fileext = ".md"))
+knit(str_c(r_path,"02_clean.qmd"), output = tempfile(fileext = ".md"))
+knit(str_c(r_path,"03_augment.qmd"), output = tempfile(fileext = ".md"))
+knit(str_c(r_path,"04_describe.qmd"), output = tempfile(fileext = ".md"))
+knit(str_c(r_path,"05_analysis.qmd"), output = tempfile(fileext = ".md"))
+knit(str_c(r_path,"06_analysis.qmd"), output = tempfile(fileext = ".md"))
 ```
 
 ```{r}
-quarto_render(input = paste0(r_path, "01_load.qmd"),
+quarto_render(input = str_c(r_path, "01_load.qmd"),
   quarto_args = c("--output-dir", results_path))
 
-quarto_render(input = paste0(r_path, "02_clean.qmd"),
+quarto_render(input = str_c(r_path, "02_clean.qmd"),
   quarto_args = c("--output-dir", results_path))
 
-quarto_render(input = paste0(r_path, "03_augment.qmd"),
+quarto_render(input = str_c(r_path, "03_augment.qmd"),
   quarto_args = c("--output-dir", results_path))
 
-quarto_render(input = paste0(r_path, "04_describe.qmd"),
+quarto_render(input = str_c(r_path, "04_describe.qmd"),
   quarto_args = c("--output-dir", results_path))
 
-quarto_render(input = paste0(r_path, "05_analysis.qmd"),
+quarto_render(input = str_c(r_path, "05_analysis.qmd"),
   quarto_args = c("--output-dir", results_path))
 
-quarto_render(input = paste0(r_path, "06_analysis.qmd"),
+quarto_render(input = str_c(r_path, "06_analysis.qmd"),
   quarto_args = c("--output-dir", results_path))
 ```

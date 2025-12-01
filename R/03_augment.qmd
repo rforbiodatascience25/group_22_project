@@ -26,8 +26,8 @@ source("99_proj_func.R")
 ```{r}
 #| message: false
 data_path = "../data/"
-sider = read_tsv(paste0(data_path, "sider_full_clean.tsv"))
-drugbank = read_tsv(paste0(data_path, "drugbank_full_clean.tsv"))
+sider = read_tsv(str_c(data_path, "sider_full_clean.tsv"))
+drugbank = read_tsv(str_c(data_path, "drugbank_full_clean.tsv"))
 ```
 
 ## Adding Lipinski features and fixing column names
@@ -74,5 +74,5 @@ df <- df |>
   mutate(
     uniprot_names = map_chr(uniprot_names, ~ paste(.x, collapse = ";"))
   )
-write_tsv(df, paste0(data_path, "merged_data.tsv"))
+write_tsv(df, str_c(data_path, "merged_data.tsv"))
 ```

@@ -111,7 +111,7 @@ violin_plot <- ggplot(combined_data, aes(x = category, y = count, fill = categor
   theme_minimal() +
   theme(legend.position = "none")
 
-ggsave(paste0(results_path,"Description_violin_plot.png"), plot = last_plot(), 
+ggsave(str_c(results_path,"Description_violin_plot.png"), plot = last_plot(), 
        width = 8, height = 6, dpi = 300)
 print(violin_plot)
 ```
